@@ -5,13 +5,8 @@ import { NatalScreen } from '../../components/screens/NatalScreen';
 
 export const natalModule: AppModule = {
   id: 'natal',
-  nav: {
-    placement: 'bottom',
-    order: 30,
-    icon: Sparkles,
-    path: '/natal',
-    labelKey: 'nav.natal'
-  },
+  // NAV REMOVED - Natal Chart Hub accessible via Home screen
+  // Bottom nav limited to 4 items: Home, Mentors, Messages, Profile
   routes: [
     { path: 'natal', element: <NatalScreen /> }
   ]

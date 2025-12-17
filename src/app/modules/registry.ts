@@ -19,26 +19,34 @@ import { paymentsModule } from './paymentsModule';
 import { numerologyModule } from './numerologyModule';
 import { meditationModule } from './meditationModule';
 
-// CHAT CONSULTATIONS ONLY - Core modules for Mentor → Booking → Messages flow
+// REBUILD: Modular app with independent modules
+// Core working modules + Natal Chart hub + Placeholders
 export const ALL_MODULES: AppModule[] = [
-  homeModule,
-  mentorsModule,
-  sessionsModule, // NEW: My Sessions list
-  // natalModule, // DISABLED - Not part of Chat Consultations product
-  // communityModule, // DISABLED - Not part of Chat Consultations product
-  profileModule,
-  chatModule,
-  notificationsModule,
-  // coursesModule, // DISABLED - Not part of Chat Consultations product
-  settingsModule,
-  proModule,
-  adminModule,
-  mentorDashboardModule,
-  // astrologyModule, // DISABLED - Not part of Chat Consultations product
-  // numerologyModule, // DISABLED - Not part of Chat Consultations product
-  // meditationModule, // DISABLED - Not part of Chat Consultations product
-  // humanDesignModule, // DISABLED - Not part of Chat Consultations product
-  paymentsModule
+  // === CORE MODULES (Must Work) ===
+  homeModule,              // Dashboard with quick links
+  mentorsModule,           // Mentors list, profile, booking flow
+  sessionsModule,          // My Sessions (bookings list)
+  chatModule,              // Messages with AI Assistant
+  profileModule,           // User profile
+  settingsModule,          // Settings, birth data
+  
+  // === NATAL CHART HUB ===
+  natalModule,             // Hub screen (4 sections, no wheel)
+  astrologyModule,         // Astrology sub-module (placeholder ok)
+  numerologyModule,        // Numerology sub-module (placeholder ok)
+  humanDesignModule,       // Human Design sub-module (placeholder ok)
+  meditationModule,        // Meditation catalog (placeholder ok)
+  
+  // === SECONDARY MODULES ===
+  notificationsModule,     // Basic notifications
+  proModule,               // Pro subscription (mock payment)
+  paymentsModule,          // Payment handling
+  
+  // === PLACEHOLDERS (Optional) ===
+  communityModule,         // Community placeholder
+  coursesModule,           // Courses placeholder
+  adminModule,             // Admin placeholder
+  mentorDashboardModule,   // Mentor dashboard placeholder
 ];
 
 export const getAllModules = () => ALL_MODULES;

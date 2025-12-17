@@ -7,7 +7,7 @@ export const profileModule: AppModule = {
   id: 'profile',
   nav: {
     placement: 'bottom',
-    order: 50,
+    order: 40, // Home(10) → Mentors(20) → Messages(30) → Profile(40)
     icon: User,
     path: '/profile',
     labelKey: 'nav.profile'
