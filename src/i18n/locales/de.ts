@@ -218,4 +218,11 @@ export default {
 
   'profile.charts': 'Meine Diagramme',
   'profile.statusPending': 'Antrag ausstehend',
+
+  'error.title': 'Etwas ist schiefgelaufen',
+  'error.message': 'Es ist ein unerwarteter Fehler aufgetreten. Bitte laden Sie die Seite neu.',
+  'error.reload': 'Seite neu laden',
+  'error.copyDetails': 'Fehlerdetails kopieren',
+  'error.copied': 'Kopiert!',
+  'error.helpText': 'Wenn das Problem weiterhin besteht, wenden Sie sich bitte an den Support.',
 };

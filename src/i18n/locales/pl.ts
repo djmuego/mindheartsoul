@@ -218,4 +218,11 @@ export default {
 
   'profile.charts': 'Moje wykresy',
   'profile.statusPending': 'Wniosek oczekuje',
+
+  'error.title': 'Coś poszło nie tak',
+  'error.message': 'Napotkaliśmy nieoczekiwany błąd. Proszę przeładować stronę.',
+  'error.reload': 'Przeładuj stronę',
+  'error.copyDetails': 'Kopiuj szczegóły błędu',
+  'error.copied': 'Skopiowano!',
+  'error.helpText': 'Jeśli problem będzie się powtarzał, skontaktuj się z obsługą.',
 };

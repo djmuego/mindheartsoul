@@ -213,4 +213,11 @@ export default {
   'blueprint.labelSun': 'Sun',
   'blueprint.labelMoon': 'Moon',
   'blueprint.labelRising': 'Rising',
+
+  'error.title': 'Something Went Wrong',
+  'error.message': 'We encountered an unexpected error. Please reload the page to continue.',
+  'error.reload': 'Reload Page',
+  'error.copyDetails': 'Copy Error Details',
+  'error.copied': 'Copied!',
+  'error.helpText': 'If the problem persists, please contact support.',
 };

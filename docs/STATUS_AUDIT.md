@@ -14,7 +14,7 @@
 |------|--------|-------------|
 | A: CI/Quality Gates | ✅ DONE | GitHub Actions workflow for typecheck+build+test |
 | B: i18n Safety Net | ✅ DONE | Locale key consistency checker + CI integration |
-| C: Observability | 🔧 TODO | Error Boundary + lightweight logging |
+| C: Observability | ✅ DONE | Global Error Boundary + user-friendly fallback |
 | D: UX Consistency | 🔧 TODO | Success toasts, unified empty states |
 | E: Performance | 🔧 TODO | Bundle analyzer, lazy loading |
 | F: Release Docs | 🔧 TODO | Deployment guide, release notes, security notes |

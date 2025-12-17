@@ -218,4 +218,11 @@ export default {
 
   'profile.charts': 'Mis cartas',
   'profile.statusPending': 'Solicitud pendiente',
+
+  'error.title': 'Algo salió mal',
+  'error.message': 'Encontramos un error inesperado. Por favor, recarga la página para continuar.',
+  'error.reload': 'Recargar página',
+  'error.copyDetails': 'Copiar detalles del error',
+  'error.copied': '¡Copiado!',
+  'error.helpText': 'Si el problema persiste, contacta con soporte.',
 };
