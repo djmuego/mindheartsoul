@@ -304,3 +304,77 @@ After core functionality is stable:
 
 **Result**: Core flows (Chat + Mentors) now work reliably with proper error handling.
 
+
+---
+
+## 2025-12-17: Micro-Prompt A - Diagnostic Audit (No Fixes)
+
+### Goal
+Audit Messages/Chat and Mentors to identify why they might fail. Code analysis only, no implementation changes.
+
+### Method
+- Deep code review of routes, params, services
+- Traced data flow: UI → service → localStorage
+- Identified potential edge cases
+- Created reproduction steps for manual testing
+
+### Findings
+
+#### Messages/Chat: 🟢 LIKELY WORKING
+**Code Analysis**:
+- ✅ Routes match params (`chat/:id`)
+- ✅ sendMessage uses localStorage correctly
+- ✅ AI fallback logic is safe (no crashes)
+- ✅ Graceful handling of missing API key
+- ✅ Pro gating implemented correctly
+
+**Potential Issue**: Minor edge case - if conversation ID is invalid, shows "Loading..." forever. Low priority.
+
+**Files Analyzed**:
+- `src/app/modules/chatModule.tsx` - routes
+- `src/components/screens/ChatThreadScreen.tsx` - UI logic
+- `src/services/chatService.ts` - sendMessage, persistence
+
+#### Mentors: 🟢 LIKELY WORKING
+**Code Analysis**:
+- ✅ Routes match params (`mentors/:id`)
+- ✅ Click handler uses correct path
+- ✅ Error handling: shows "Not Found" screen if mentor missing
+- ✅ Mock data exists and is accessible
+
+**No Issues Found**: All code paths are safe.
+
+**Files Analyzed**:
+- `src/app/modules/mentorsModule.tsx` - routes
+- `src/components/screens/MentorsScreen.tsx` - click handler
+- `src/components/screens/MentorProfileScreen.tsx` - error handling
+- `src/services/mockData.ts` - data source
+
+#### Booking → Chat: ✅ WORKING
+**Code Analysis**:
+- ✅ "Open Chat" button exists in BookingDetailScreen
+- ✅ Navigates to correct chat thread
+- ✅ No video dependencies
+
+### Documentation
+**Created/Updated**:
+- `docs/STATUS_AUDIT_REALITY.md` (11KB)
+  - Executive summary
+  - Detailed code analysis for Messages + Mentors
+  - Reproduction steps for manual testing
+  - Fix plans for potential issues
+  - Next steps
+
+### Manual Testing Required
+**Before declaring "DONE"**:
+1. Open dev server: https://5182-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
+2. Test Messages: send, reload, verify persistence
+3. Test Mentors: click 3 cards, verify detail pages load
+4. Document actual vs expected behavior
+
+### Conclusion
+Based on code analysis, both **Messages/Chat** and **Mentors** appear to be correctly implemented. Manual browser testing needed to confirm or identify edge cases not visible in code review.
+
+**Next Micro-Prompt**: B (if issues found) or C (if all working, move to UI cleanup)
+
+---
