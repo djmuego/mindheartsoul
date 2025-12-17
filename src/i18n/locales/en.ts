@@ -47,7 +47,9 @@ export default {
   'courses.continue': 'Continue',
   'courses.completed': 'Completed',
   'courses.markCompleted': 'Mark as Completed',
+  'courses.markComplete': 'Mark as Complete',
   'courses.nextLesson': 'Next Lesson',
+  'courses.backToCourse': 'Back to Course',
   'courses.lockedTitle': 'Content Locked',
   'courses.lockedBody': 'Upgrade to Pro to access this lesson.',
 
@@ -141,6 +143,7 @@ export default {
   'common.book': 'Book Session',
   'common.comingSoon': 'Coming Soon',
   'common.publish': 'Publish',
+  'common.loading': 'Loading...',
 
   'video.disabledTitle': 'Video Sessions Temporarily Disabled',
   'video.disabledMessage': 'We are working on improving the video experience. In the meantime, please use chat to connect with your mentor.',
@@ -176,6 +179,9 @@ export default {
   'notifications.title': 'Notifications',
   'notifications.empty': 'No notifications yet.',
   'notifications.bookingConfirmed': 'Booking Confirmed',
+  'notifications.lessonCompleted': 'Lesson Completed',
+  'notifications.subscriptionPurchased': 'Pro Subscription Activated',
+  'notifications.subscriptionExpired': 'Pro Subscription Expired',
 
   'ai.limitReached': 'Daily Limit Reached',
   'ai.upgradeToChat': 'Upgrade to Pro for unlimited chats.',

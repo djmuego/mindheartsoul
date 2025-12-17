@@ -124,4 +124,15 @@ export default {
   'blueprint.labelSun': 'Słońce',
   'blueprint.labelMoon': 'Księżyc',
   'blueprint.labelRising': 'Ascendent',
+
+  'courses.markComplete': 'Oznacz jako ukończone',
+  'courses.backToCourse': 'Powrót do kursu',
+  'common.loading': 'Ładowanie...',
+
+  'notifications.title': 'Powiadomienia',
+  'notifications.empty': 'Brak powiadomień.',
+  'notifications.bookingConfirmed': 'Rezerwacja potwierdzona',
+  'notifications.lessonCompleted': 'Lekcja ukończona',
+  'notifications.subscriptionPurchased': 'Subskrypcja Pro aktywowana',
+  'notifications.subscriptionExpired': 'Subskrypcja Pro wygasła',
 };

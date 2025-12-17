@@ -36,7 +36,9 @@ export default {
   'courses.continue': 'Продолжить',
   'courses.completed': 'Завершено',
   'courses.markCompleted': 'Отметить как пройденное',
+  'courses.markComplete': 'Отметить завершение',
   'courses.nextLesson': 'Следующий урок',
+  'courses.backToCourse': 'Вернуться к курсу',
   'courses.lockedTitle': 'Контент закрыт',
   'courses.lockedBody': 'Обновитесь до Pro для доступа.',
 
@@ -80,6 +82,7 @@ export default {
   'common.book': 'Записаться',
   'common.comingSoon': 'Скоро',
   'common.publish': 'Опубликовать',
+  'common.loading': 'Загрузка...',
 
   'video.disabledTitle': 'Видеосессии временно отключены',
   'video.disabledMessage': 'Мы работаем над улучшением видеоопыта. Пока используйте чат для связи с наставником.',
@@ -124,4 +127,11 @@ export default {
   'blueprint.labelSun': 'Солнце',
   'blueprint.labelMoon': 'Луна',
   'blueprint.labelRising': 'Асц',
+
+  'notifications.title': 'Уведомления',
+  'notifications.empty': 'Нет уведомлений.',
+  'notifications.bookingConfirmed': 'Бронирование подтверждено',
+  'notifications.lessonCompleted': 'Урок завершён',
+  'notifications.subscriptionPurchased': 'Pro подписка активирована',
+  'notifications.subscriptionExpired': 'Pro подписка истекла',
 };

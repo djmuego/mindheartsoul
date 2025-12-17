@@ -1,339 +1,300 @@
-# STATUS AUDIT — Round 1: Close The Loops
+# STATUS AUDIT — Round 2: Product Polish (P1)
 
-**Date**: 2025-12-17  
-**Goal**: Full audit of MindHeartSoul MVP to identify broken flows, placeholders, and missing implementations.
+**Date**: 2025-12-17 (Updated after P0 completion)  
+**Baseline**: Commits bc36326 (code) + fc895d0 (docs)  
+**Goal**: Complete P1 improvements for production-ready UX
 
 ---
 
 ## MODULE STATUS OVERVIEW
 
-| Module | Status | Notes |
-|--------|--------|-------|
-| Auth | ✅ DONE | Login/Register/Onboarding complete |
-| Home | ⚠️ PARTIAL | Sections work but some are placeholders |
-| Profile | ✅ DONE | Profile + Blueprint + Settings |
-| Natal | ✅ DONE | Birth profile + charts working |
-| Astrology | ⚠️ PLACEHOLDER | Mock data, needs engine |
-| Human Design | ⚠️ PLACEHOLDER | Simple placeholder, needs Bodygraph renderer |
-| Mentors | ✅ DONE | List + Profile + Booking flow |
-| Booking | ⚠️ PARTIAL | Flow works but payment integration incomplete |
-| Courses | ✅ DONE | CRUD + Payment + Progress tracking |
-| Community | ✅ DONE | Posts + Comments + Reports + Admin moderation |
-| Chat | ✅ DONE | User↔Mentor chat working |
-| Video Sessions | ❌ BROKEN | Needs to be DISABLED with proper placeholder |
-| Payments | ⚠️ PARTIAL | Apirone integration done, but Pro subscription model broken |
-| Pro | ❌ BROKEN | Lifetime model, needs monthly/yearly plans |
-| Admin | ✅ DONE | Dashboard + Reports moderation |
-| Notifications | ⚠️ PARTIAL | System works but not all events trigger notifications |
+| Module | Status | P0 | P1 | Notes |
+|--------|--------|----|----|-------|
+| Auth | ✅ DONE | ✅ | ✅ | Login/Register/Onboarding complete |
+| Home | ⚠️ P1 TARGET | ✅ | 🔧 | Sections need real data + empty states |
+| Profile | ✅ DONE | ✅ | ✅ | Profile + Blueprint + Settings |
+| Natal | ✅ DONE | ✅ | ✅ | Birth profile + charts working |
+| Astrology | 📋 DEFERRED | N/A | N/A | Mock data, engine deferred to future |
+| Human Design | 📋 DEFERRED | N/A | N/A | Clean placeholder, Bodygraph deferred |
+| Mentors | ✅ DONE | ✅ | ✅ | List + Profile + Booking flow |
+| Booking | ✅ DONE | ✅ | ✅ | Payment flow complete with confirmations |
+| Courses | ⚠️ P1 TARGET | ✅ | 🔧 | CRUD + Payment done, needs "Mark Complete" |
+| Community | ✅ DONE | ✅ | ✅ | Posts + Comments + Reports + Moderation |
+| Chat | ✅ DONE | ✅ | ✅ | User↔Mentor chat working |
+| Video Sessions | ✅ DONE | ✅ | ✅ | Cleanly disabled with helpful placeholder |
+| Payments | ✅ DONE | ✅ | ✅ | Apirone + Monthly/Yearly subscriptions |
+| Pro | ✅ DONE | ✅ | ✅ | Monthly ($9.99) / Yearly ($99) with expiry |
+| Admin | ✅ DONE | ✅ | ✅ | Dashboard + Reports moderation |
+| Mentor Dashboard | ⚠️ P1 TARGET | ✅ | 🔧 | Exists but needs booking management |
+| Notifications | ⚠️ P1 TARGET | ✅ | 🔧 | Core works, needs more event triggers |
+
+**Legend:**
+- ✅ DONE — Fully functional
+- ⚠️ P1 TARGET — Needs P1 improvements
+- 🔧 In Progress — Current round target
+- 📋 DEFERRED — Architecture ready, implementation deferred
 
 ---
 
-## CRITICAL ISSUES (P0) — MUST FIX NOW
+## ✅ P0 COMPLETED (Round 1) — Baseline
 
-### 1. **PRO SUBSCRIPTION MODEL — BROKEN** ❌
-**Current State**:
-- Pro is "Lifetime Access" for $9.99 (one-time payment)
-- No subscription expiry logic
-- No monthly/yearly plans
-- No renewal mechanism
+### 1. Pro Subscription Model ✅
+**Implemented:**
+- Monthly: $9.99/month
+- Yearly: $99/year (17% discount)
+- `expiresAtIso` field required
+- `useEntitlements()` checks expiry via `isSubscriptionActive()`
+- ProScreen UI with plan selection
+- Payment flow integrated with `plan` parameter
 
-**Expected Behavior**:
-- Monthly plan: $9.99/month (auto-renews)
-- Yearly plan: $99/year (auto-renews, 17% discount)
-- Subscription has `expiresAtIso` field
-- After expiry, user loses Pro access
-- Payment flow supports subscription purpose
+**Files Changed:**
+- `src/components/screens/ProScreen.tsx`
+- `src/components/screens/payment/PaymentScreen.tsx`
+- `src/services/subscriptionService.ts`
+- `src/hooks/useEntitlements.ts`
+- i18n: EN/RU/DE/ES/PL
 
-**Files to Fix**:
-- `src/types.ts` — Add `SubscriptionPlan` type ('monthly' | 'yearly')
-- `src/components/screens/ProScreen.tsx` — Show both plans with pricing
-- `src/components/screens/payment/PaymentScreen.tsx` — Handle subscription with expiry
-- `src/hooks/useEntitlements.ts` — Check expiry date
-- `src/services/payments/paymentsService.ts` — Add subscription renewal logic
+### 2. Video Sessions — Cleanly Disabled ✅
+**Implemented:**
+- `SessionJoinScreen` replaced with "Video Temporarily Disabled" placeholder
+- Shows alternatives: Chat + External Meeting
+- CTAs: "Go to Chat" button
+- Booking time displayed
+- No dependency on videoService for join flow
 
-**Reproduction**:
-1. Go to Profile → Pro
-2. Click "Upgrade to Pro"
-3. Pay $9.99
-4. Result: Pro activated forever (WRONG)
-5. Expected: Pro active for 1 month, then expires
+**Files Changed:**
+- `src/components/screens/SessionJoinScreen.tsx`
+- i18n: EN/RU/DE/ES/PL
 
----
+### 3. Booking Payment Flow — Complete ✅
+**Implemented:**
+- `confirmBooking()` function in bookingsService
+- Payment success handler calls confirmBooking()
+- Status updated to 'confirmed'
+- Notification 'booking_confirmed' created
+- Redirect to booking detail with ?success=true
 
-### 2. **VIDEO SESSIONS — MUST DISABLE CLEANLY** ❌
-**Current State**:
-- `SessionJoinScreen` tries to join Jitsi video
-- Booking flow creates video sessions
-- Users expect video to work but it doesn't
+**Files Changed:**
+- `src/services/bookingsService.ts`
+- `src/services/notificationsService.ts`
+- `src/components/screens/payment/PaymentScreen.tsx`
 
-**Expected Behavior**:
-- Replace `SessionJoinScreen` with "Video Temporarily Disabled" message
-- Show CTA: "Contact your mentor directly" or "Open external link"
-- Remove dependency on `videoService` from booking flow
-- Booking can still be created but meetingUrl is optional/null
-
-**Files to Fix**:
-- `src/components/screens/SessionJoinScreen.tsx` — Replace with disabled screen
-- `src/services/videoService.ts` — Mark as deprecated or stub
-- `src/components/screens/BookingDetailScreen.tsx` — Hide "Join Session" button if video disabled
-- Feature flag: `videoEnabled: false` by default
-
-**Reproduction**:
-1. Book a session with mentor
-2. Go to Profile → Booking History
-3. Click on booking → "Join Session" button
-4. Result: Shows "can_join" but video doesn't work
-5. Expected: Show "Video temporarily disabled, contact mentor"
-
----
-
-### 3. **BOOKING → PAYMENT FLOW — INCOMPLETE** ⚠️
-**Current State**:
-- Booking created with status 'pending_payment'
-- Payment screen opens
-- After payment simulation, no clear success state
-- Booking status not updated to 'confirmed'
-- No notification sent
-
-**Expected Behavior**:
-1. User books session → Booking created (status: pending_payment)
-2. Redirects to Payment screen
-3. User pays → Payment marked 'succeeded'
-4. Booking status updated to 'confirmed'
-5. Notification sent: "Booking confirmed"
-6. Success screen shown or redirect to Booking Detail
-
-**Files to Fix**:
-- `src/components/screens/payment/PaymentScreen.tsx` — After payment success for 'booking', update booking status
-- `src/services/bookingService.ts` — Add `confirmBooking(bookingId)` function
-- `src/services/notificationService.ts` — Trigger 'booking_confirmed' notification
-- `src/components/screens/BookingConfirmScreen.tsx` — Show success state
-
-**Reproduction**:
-1. Go to Mentors → Select mentor → Book session
-2. Select time → Confirm → Redirects to Payment
-3. Select USDT → Generate address → Simulate payment
-4. Result: Redirects to `/bookings/{id}?success=true` but booking still 'pending_payment'
-5. Expected: Booking status 'confirmed' + notification
-
----
-
-### 4. **i18n MIXED LANGUAGES** ⚠️
-**Current State**:
-- Some screens have hardcoded English text in Russian locale
-- Missing translation keys in DE/ES/PL
-- Inconsistent key naming
-
-**Expected Behavior**:
-- All UI text uses i18n keys
-- All keys exist in EN/RU/DE/ES/PL
+### 4. i18n Cleanup ✅
+**Implemented:**
+- All Pro subscription keys added
+- All video disabled keys added
+- All keys present in EN/RU/DE/ES/PL
 - No hardcoded strings
 
-**Files to Audit**:
-- All `*Screen.tsx` files
-- Check for hardcoded strings like "Coming Soon", "Free", "Buy", etc.
+**Quality Metrics (P0 Baseline):**
+- ✅ TypeScript: 0 errors
+- ✅ Tests: 31/31 passing (100%)
+- ✅ Build: SUCCESS
+- ✅ Bundle: 469KB
 
 ---
 
-## PARTIAL IMPLEMENTATIONS (P1) — FINISH THESE
+## 🔧 P1 TARGETS (Round 2) — Current Focus
 
-### 5. **COURSES — LESSON PROGRESS UI** ⚠️
-**Current State**:
-- Progress tracked in storage
-- Lesson completion works
-- Progress bar shows on course cards
-- But lesson screen doesn't show "Mark Complete" button clearly
+### 1. Courses — Lesson Completion UI 🔧
+**Current Gap:**
+- Lesson completion tracked in storage ✅
+- Progress bar shows on course cards ✅
+- **Missing:** "Mark as Complete" button in LessonScreen
+- **Missing:** Completion flow (redirect to next lesson or course)
+- **Missing:** Pro-gating for direct URL access to Pro lessons
 
-**Expected Behavior**:
-- LessonScreen shows "Mark as Complete" button at bottom
-- After completion, redirect to next lesson or back to course
-- Show completion checkmark
+**P1 Requirements:**
+- Add "Mark as Complete" button at bottom of LessonScreen
+- After completion:
+  - Save progress to storage
+  - Show success feedback
+  - Auto-advance to next lesson OR back to course
+- Pro Guard:
+  - Direct URL to Pro lesson without Pro → show paywall/CTA
+  - Non-Pro users can preview first lesson only
+- i18n keys: `courses.markComplete`, `courses.nextLesson`, `courses.backToCourse`
 
-**Files to Check**:
+**Files to Modify:**
 - `src/components/screens/LessonScreen.tsx`
+- `src/services/coursesService.ts` (verify markLessonCompleted)
+- `src/i18n/locales/*` (add missing keys)
+
+**Acceptance Criteria:**
+- ✅ List → Detail → Lesson → Mark Complete → Progress saved
+- ✅ Refresh page → Completion persists
+- ✅ Non-Pro user → Direct URL to Pro lesson → Paywall shown
+- ✅ i18n keys in all 5 locales
 
 ---
 
-### 6. **MENTOR DASHBOARD — INCOMPLETE** ⚠️
-**Current State**:
-- MentorDashboardScreen exists
-- Shows stats (bookings, earnings)
-- But no way to manage availability or view booking requests
+### 2. Mentor Dashboard — Booking Management 🔧
+**Current Gap:**
+- MentorDashboardScreen shows stats ✅
+- MentorBookingsScreen exists ✅
+- **Missing:** List of booking requests (upcoming sessions)
+- **Missing:** Approve/Decline actions (if needed)
+- **Missing:** Empty state for "no bookings"
 
-**Expected Behavior**:
-- Mentor can see upcoming bookings
-- Mentor can manage availability (set schedule)
-- Mentor can view booking requests (if pending approval system added)
+**P1 Requirements:**
+- Show list of upcoming bookings for mentor:
+  - Date/Time
+  - Client name
+  - Session type
+  - Status (pending/confirmed/completed)
+- Actions (if applicable):
+  - "View Details" → Navigate to booking detail
+  - Status badges (color-coded)
+- Empty state:
+  - Icon + Message: "No upcoming sessions"
+  - CTA: "Manage Availability" or "View Past Sessions"
+- Real-time data from bookingsService (filter by mentorId)
 
-**Files to Check**:
-- `src/components/screens/MentorDashboardScreen.tsx`
+**Files to Modify:**
 - `src/components/screens/MentorBookingsScreen.tsx`
-- `src/components/screens/MentorAvailabilityScreen.tsx`
+- `src/services/bookingsService.ts` (add getBookingsByMentor if missing)
+- `src/i18n/locales/*`
+
+**Acceptance Criteria:**
+- ✅ Mentor logs in → Dashboard → Bookings tab
+- ✅ Shows list of upcoming sessions (sorted by date)
+- ✅ Empty state shown if no bookings
+- ✅ Click booking → Navigate to detail view
+- ✅ i18n keys in all 5 locales
 
 ---
 
-### 7. **HOME SCREEN SECTIONS — PLACEHOLDERS** ⚠️
-**Current State**:
-- Home shows: Daily Affirmation, Natal Chart, AI Guide, Featured Mentors, Community Posts, Courses
-- Some sections are static cards with no real data
+### 3. Home Sections — Real Data + Empty States 🔧
+**Current Gap:**
+- Home shows sections ✅
+- Some sections hardcoded/placeholder ⚠️
+- **Missing:** Connect to real data sources
+- **Missing:** Product-quality empty states
 
-**Expected Behavior**:
-- All sections should show real data or clear CTA
-- "Complete Your Profile" only shows if birthProfile is missing
-- Featured Mentors should pull from mentor list
-- Community Posts should show latest posts
+**P1 Requirements:**
+- **Featured Mentors:** Pull from mentorsService (top 3-5)
+- **Community Posts:** Pull from communityService (latest 3-5)
+- **Courses:** Pull from coursesService (featured/new)
+- **Empty States:**
+  - If no data: Icon + Description + CTA
+  - Example: "No mentors yet" → "Explore Mentors" button
+- **"Complete Your Profile":** Only show if birthProfile missing
+- Remove or connect any static placeholder cards
 
-**Files to Check**:
+**Files to Modify:**
 - `src/components/screens/HomeScreen.tsx`
+- `src/i18n/locales/*`
+
+**Acceptance Criteria:**
+- ✅ Home sections show real data from services
+- ✅ Empty states product-quality (icon + text + CTA)
+- ✅ "Complete Profile" only shows when needed
+- ✅ No static "Coming Soon" cards without context
 
 ---
 
-### 8. **NOTIFICATIONS — NOT ALL EVENTS TRIGGER** ⚠️
-**Current State**:
-- Notification system works
-- But many events don't create notifications (e.g., course purchase, mentor approval, booking confirmation)
+### 4. Notifications — Event Triggers 🔧
+**Current Gap:**
+- Notification system works ✅
+- `pushNotification()` and `addNotification()` exist ✅
+- **Missing:** Triggers for key events
 
-**Expected Behavior**:
-- Booking confirmed → notification
-- Payment success → notification
-- Course purchased → notification
-- Mentor approved → notification
+**P1 Requirements:**
+Add notification triggers for:
+1. **Subscription Purchased:** "Pro subscription activated (Monthly/Yearly)"
+2. **Subscription Expired:** "Your Pro subscription has expired" (one-time, no spam)
+3. **Course Lesson Completed:** "Lesson completed: {title}"
+4. **Booking Confirmed:** Already done ✅
+5. **Report Moderated:** "Your report has been reviewed" (optional)
 
-**Files to Fix**:
-- Add notification triggers in service functions
+**Files to Modify:**
+- `src/components/screens/payment/PaymentScreen.tsx` (subscription purchased)
+- `src/hooks/useEntitlements.ts` (subscription expired check)
+- `src/services/coursesService.ts` (lesson completed trigger)
+- `src/i18n/locales/*`
 
----
-
-## PLACEHOLDERS (P2) — ARCHITECTURE READY
-
-### 9. **ASTROLOGY SCREEN — MOCK DATA** 📋
-**Status**: Architecture ready, mock data in place  
-**What's Missing**: Real astrology engine (chart calculations)  
-**Current**: Shows mock "Deep dive into planetary transits. Coming soon."  
-**Action**: Keep as is for now, engine will be added later
-
----
-
-### 10. **HUMAN DESIGN — SIMPLE PLACEHOLDER** 📋
-**Status**: Simple "Coming Soon" placeholder (you just fixed this)  
-**What's Missing**: Bodygraph SVG renderer + HD engine  
-**Action**: Add Bodygraph renderer architecture (see Round 1 tasks)
+**Acceptance Criteria:**
+- ✅ Pro subscription → Notification created
+- ✅ Lesson completed → Notification created
+- ✅ Subscription expired → One-time notification (no duplicates)
+- ✅ Notifications visible in bell icon dropdown
+- ✅ i18n keys in all 5 locales
 
 ---
 
-## BROKEN FLOWS — STEP-BY-STEP REPRODUCTION
+## 📋 DEFERRED TO FUTURE (Not P1)
 
-### Flow 1: Pro Subscription Purchase ❌
-1. Go to Profile
-2. Click "Pro" section
-3. Click "Upgrade to Pro" ($9.99)
-4. Select USDT → TRC-20
-5. Click "Continue to Payment"
-6. Generate address + Simulate payment
-7. **ISSUE**: Pro activated but with no expiry date
-8. **EXPECTED**: Pro active for 1 month, expiresAtIso set
+### Astrology Screen
+- **Status:** Placeholder with "Coming Soon"
+- **Reason:** Requires astrology calculation engine
+- **Action:** Keep placeholder, engine implementation deferred
 
-### Flow 2: Video Session Join ❌
-1. Book a session with mentor
-2. Confirm booking → Pay
-3. Go to Profile → Booking History
-4. Click booking → "Join Session"
-5. **ISSUE**: Shows video join screen but video doesn't work
-6. **EXPECTED**: "Video temporarily disabled" screen
+### Human Design Bodygraph
+- **Status:** Clean placeholder
+- **Reason:** Requires SVG renderer + HD engine
+- **Action:** Keep placeholder, Bodygraph deferred
 
-### Flow 3: Booking Payment Confirmation ⚠️
-1. Book session → Redirects to payment
-2. Pay via crypto simulation
-3. **ISSUE**: Redirects but booking status not updated, no notification
-4. **EXPECTED**: Booking confirmed + notification + success screen
-
-### Flow 4: Course Purchase ✅
-1. Go to Courses
-2. Select paid course (e.g., "Heal Your Inner Child" $14.99)
-3. Click "Buy Course"
-4. Pay via crypto
-5. **RESULT**: Works correctly, course unlocked ✅
-
-### Flow 5: Community Post Report → Admin Moderation ✅
-1. Create post in Community
-2. Report post (as another user)
-3. Login as Admin
-4. Go to Admin → Community Reports
-5. Hide/Delete/Ban actions work
-6. **RESULT**: Works correctly ✅
+### OAuth Login
+- **Status:** Not started
+- **Reason:** Not critical for MVP
+- **Action:** Deferred to future sprint
 
 ---
 
-## TEST STATUS
+## P1 EXECUTION PLAN
 
-| Test Suite | Status | Issues |
-|------------|--------|--------|
-| homeSections.test.ts | ✅ PASS | None |
-| guards.test.tsx | ✅ PASS | None |
-| blueprint.test.tsx | ✅ PASS | None |
-| validation.test.ts | ✅ PASS | None |
-| notifications.test.ts | ✅ PASS | None |
-| aiLimits.test.ts | ✅ PASS | None |
-| storageDriver.test.ts | ✅ PASS | None |
+### Step 1: Audit & Documentation ✅
+- [x] Update STATUS_AUDIT.md
+- [ ] Update SMOKE_TEST.md with P1 scenarios
+- [ ] Update PROMPTS_LOG.md
 
-**Total**: 31/31 tests passing ✅  
-**Coverage**: Basic flows covered, need to add tests for new Pro subscription logic
+### Step 2: Courses — Lesson Completion
+- [ ] Add "Mark as Complete" button to LessonScreen
+- [ ] Implement completion flow (next lesson / back to course)
+- [ ] Add Pro-gating for direct URL access
+- [ ] Add i18n keys (EN/RU/DE/ES/PL)
+- [ ] Test + Doctor check
+
+### Step 3: Mentor Dashboard — Bookings
+- [ ] Update MentorBookingsScreen with real data
+- [ ] Add empty state
+- [ ] Add i18n keys
+- [ ] Test + Doctor check
+
+### Step 4: Home Sections — Data + Empty States
+- [ ] Connect sections to services
+- [ ] Add product-quality empty states
+- [ ] Test + Doctor check
+
+### Step 5: Notifications — Event Triggers
+- [ ] Add subscription purchased notification
+- [ ] Add lesson completed notification
+- [ ] Add subscription expired check (one-time)
+- [ ] Test + Doctor check
+
+### Step 6: Final Smoke Test
+- [ ] Run all P0 + P1 smoke tests
+- [ ] Update documentation
+- [ ] Commit + Push
 
 ---
 
-## SUMMARY: WHAT TO FIX IN ROUND 1
+## BREAKING CHANGES
 
-### P0 (Critical — Do First):
-1. ✅ **Pro Subscription Model** — Add monthly/yearly plans with expiry
-2. ✅ **Video Sessions** — Disable cleanly with proper placeholder
-3. ✅ **Booking Payment Flow** — Complete end-to-end with status update + notification
-4. ✅ **i18n Cleanup** — Remove hardcoded strings, add missing keys
-
-### P1 (Important — Do Next):
-5. **Courses Lesson Progress** — Add "Mark Complete" button
-6. **Mentor Dashboard** — Add booking management
-7. **Home Sections** — Connect to real data
-8. **Notifications** — Add triggers for all events
-
-### P2 (Nice to Have — Later):
-9. **Astrology Screen** — Keep placeholder, engine later
-10. **Human Design Bodygraph** — Add SVG renderer architecture
-
----
-
-## FILES REQUIRING CHANGES
-
-### P0 Changes:
-```
-src/types.ts — Add SubscriptionPlan type
-src/components/screens/ProScreen.tsx — Show monthly/yearly plans
-src/components/screens/payment/PaymentScreen.tsx — Handle subscription expiry
-src/hooks/useEntitlements.ts — Check subscription expiry
-src/services/payments/paymentsService.ts — Subscription logic
-src/components/screens/SessionJoinScreen.tsx — Disable video, show placeholder
-src/services/bookingService.ts — Add confirmBooking()
-src/services/notificationService.ts — Add notification triggers
-src/i18n/locales/* — Add missing keys (EN/RU/DE/ES/PL)
-```
-
-### P1 Changes:
-```
-src/components/screens/LessonScreen.tsx — Add completion button
-src/components/screens/MentorDashboardScreen.tsx — Booking management
-src/components/screens/HomeScreen.tsx — Connect real data
-```
+**None expected.** All P1 changes are additive and backward-compatible.
 
 ---
 
 ## NEXT STEPS
 
-1. Create this audit file ✅
-2. Fix P0 issues in order
-3. Run `npm run doctor` after each fix
-4. Update `docs/PROMPTS_LOG.md` with checkpoint
-5. Create smoke test checklist (10-15 steps)
+1. ✅ Update STATUS_AUDIT.md (this file)
+2. Execute P1 tasks (Steps 2-5)
+3. Run `npm run doctor` after each step
+4. Update PROMPTS_LOG.md with checkpoint
+5. Create comprehensive SMOKE_TEST.md (P0 + P1)
+6. Deploy or continue with P2 (if needed)
 
 ---
 
-**Status**: AUDIT COMPLETE  
-**Ready for**: P0 Fixes Implementation
+**Status:** P1 READY TO START  
+**Quality Baseline:** TS: 0 errors | Tests: 31/31 | Bundle: 469KB

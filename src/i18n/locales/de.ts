@@ -124,4 +124,15 @@ export default {
   'blueprint.labelSun': 'Sonne',
   'blueprint.labelMoon': 'Mond',
   'blueprint.labelRising': 'Aszendent',
+
+  'courses.markComplete': 'Als abgeschlossen markieren',
+  'courses.backToCourse': 'Zurück zum Kurs',
+  'common.loading': 'Lädt...',
+
+  'notifications.title': 'Benachrichtigungen',
+  'notifications.empty': 'Keine Benachrichtigungen.',
+  'notifications.bookingConfirmed': 'Buchung bestätigt',
+  'notifications.lessonCompleted': 'Lektion abgeschlossen',
+  'notifications.subscriptionPurchased': 'Pro-Abonnement aktiviert',
+  'notifications.subscriptionExpired': 'Pro-Abonnement abgelaufen',
 };
