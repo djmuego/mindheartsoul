@@ -208,6 +208,14 @@ export default {
   'booking.summary': 'Podsumowanie rezerwacji',
   'booking.videoDesc': 'Kliknij poniżej, aby bezpiecznie dołączyć do pokoju wideo.',
   'booking.videoReady': 'Sesja wideo gotowa',
+  'booking.openChat': 'Otwórz czat',
+
+  // Disabled features
+  'disabled.title': 'Ta funkcja jest wyłączona',
+  'disabled.heading': 'Tymczasowo niedostępne',
+  'disabled.message': 'Ta funkcja jest obecnie niedostępna. Skupiamy się na konsultacjach z mentorami przez czat.',
+  'disabled.findMentor': 'Znajdź mentora',
+  'disabled.openChat': 'Otwórz czat',
 
   'community.addComment': 'Dodaj komentarz...',
   'community.comments': 'Komentarze',

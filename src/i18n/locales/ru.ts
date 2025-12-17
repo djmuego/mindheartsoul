@@ -207,6 +207,14 @@ export default {
   'booking.summary': 'Сводка бронирования',
   'booking.videoDesc': 'Нажмите ниже, чтобы присоединиться к видеокомнате.',
   'booking.videoReady': 'Видеосессия готова',
+  'booking.openChat': 'Открыть чат',
+
+  // Disabled features
+  'disabled.title': 'Эта функция отключена',
+  'disabled.heading': 'Временно недоступно',
+  'disabled.message': 'Эта функция в данный момент недоступна. Мы сосредоточены на консультациях с менторами через чат.',
+  'disabled.findMentor': 'Найти ментора',
+  'disabled.openChat': 'Открыть чат',
 
   'community.addComment': 'Добавить комментарий...',
   'community.comments': 'Комментарии',

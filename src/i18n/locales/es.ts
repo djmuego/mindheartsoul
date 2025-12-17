@@ -208,6 +208,14 @@ export default {
   'booking.summary': 'Resumen de reserva',
   'booking.videoDesc': 'Haz clic abajo para unirte a la sala de video de forma segura.',
   'booking.videoReady': 'Sesión de video lista',
+  'booking.openChat': 'Abrir chat',
+
+  // Disabled features
+  'disabled.title': 'Esta función está deshabilitada',
+  'disabled.heading': 'Temporalmente no disponible',
+  'disabled.message': 'Esta función no está disponible actualmente. Nos enfocamos en consultas con mentores a través de chat.',
+  'disabled.findMentor': 'Buscar mentor',
+  'disabled.openChat': 'Abrir chat',
 
   'community.addComment': 'Agregar comentario...',
   'community.comments': 'Comentarios',
