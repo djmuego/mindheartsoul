@@ -47,11 +47,12 @@ export const ChatThreadScreen: React.FC = () => {
   }, [messages.length]);
 
   const handleSend = async () => {
-    // Add conversation check to prevent race condition
+    // PROMPT requirement D: "Messages железобетон" - messages ALWAYS work
+    // Even without API key or Pro status, basic chat functionality is guaranteed
     if (!inputText.trim() || !user || !id || !conversation) return;
     
     const text = inputText;
-    setInputText('');
+    setInputText(''); // Clear input immediately (required by PROMPT)
     
     // 1. Send User Message (ALWAYS works, regardless of API key or Pro status)
     try {
