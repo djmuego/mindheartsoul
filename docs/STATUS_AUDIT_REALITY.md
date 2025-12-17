@@ -1,9 +1,61 @@
-# MindHeartSoul — Reality Check (Phase 0)
+# MindHeartSoul — Reality Check & Product Status
+
+**Last Updated:** 2025-12-17  
+**Current Product Scope:** **Chat Consultations Only** (Mentors → Booking → Messages)
+
+**Dev Server:** https://5181-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
+
+---
+
+## 🚀 PRODUCT TRANSFORMATION UPDATE (2025-12-17)
+
+### Chat Consultations Only - Implementation Complete
+
+**Goal:** Transform from multi-feature wellness app to focused "Chat Consultations" product.
+
+**Changes Made:**
+
+1. **✅ Video Removed**
+   - Removed `SessionJoinScreen` route from mentorsModule
+   - Changed BookingDetailScreen: "Join Video Session" → "Open Chat" (MessageCircle icon)
+   - No video UI elements anywhere in app
+
+2. **✅ Modules Disabled**
+   - Disabled in registry: Community, Natal, Courses, Astrology, Numerology, Meditation, Human Design
+   - Created `DisabledScreen` component for graceful fallback
+   - All old routes show DisabledScreen (not 404)
+
+3. **✅ Navigation Updated**
+   - Bottom nav now: **Home (10) → Mentors (20) → Messages (30) → Profile (40)**
+   - Chat moved from header actions to bottom nav
+   - Removed `aiGuideEnabled` feature flag (chat is core)
+
+4. **✅ Booking → Chat Integration**
+   - BookingDetailScreen has "Open Chat" button
+   - Opens mentor chat: `/chat/mentor:<mentorId>`
+   - Works for all booking statuses (pending/confirmed/cancelled)
+
+5. **✅ i18n Updated**
+   - Added `booking.openChat` across all locales (EN/RU/DE/ES/PL)
+   - Added `disabled.*` keys for DisabledScreen
+   - Validation: ✅ PASSED (217 keys each)
+
+6. **✅ Documentation**
+   - Created `SMOKE_TEST_CHAT_CONSULTATIONS.md` (15 test steps)
+   - Updated `PROMPTS_LOG.md` with transformation details
+   - This file updated with current state
+
+**Remaining Work:**
+- [ ] Update Home screen to focus on consultation features
+- [ ] Run full `npm run doctor` to verify health
+- [ ] Execute smoke test (manual or automated)
+
+---
+
+## Original "Make it Actually Work" Sprint (Phase 0)
 
 **Date:** 2025-12-17  
 **Sprint Goal:** Make it actually work — Critical features must be functional, not just pretty mockups.
-
-**Dev Server:** https://5181-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
 
 ---
 
