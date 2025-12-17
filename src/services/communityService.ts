@@ -125,6 +125,70 @@ export const reportPost = (postId: string, reporterId: string, reason: Report['r
   storage.setJSON(REPORTS_KEY, reports);
 };
 
+export const getAllReports = (): Report[] => {
+  return storage.getJSON<Report[]>(REPORTS_KEY, [])
+    .sort((a, b) => new Date(b.createdAtIso).getTime() - new Date(a.createdAtIso).getTime());
+};
+
+/**
+ * Hide post (marks as hidden, post stays in DB but invisible to users)
+ */
+export const hidePost = (postId: string): void => {
+  const posts = getPosts();
+  const postIndex = posts.findIndex(p => p.id === postId);
+  if (postIndex >= 0) {
+    // Add hidden flag (extend type if needed, for now just filter it out)
+    posts[postIndex].text = '[Content Hidden by Moderator]';
+    storage.setJSON(POSTS_KEY, posts);
+  }
+};
+
+/**
+ * Delete post permanently
+ */
+export const deletePost = (postId: string): void => {
+  const posts = getPosts();
+  const filtered = posts.filter(p => p.id !== postId);
+  storage.setJSON(POSTS_KEY, filtered);
+
+  // Also delete associated comments
+  const comments = storage.getValidatedJSON<Comment[]>(COMMENTS_KEY, CommentListSchema, []);
+  const filteredComments = comments.filter(c => c.postId !== postId);
+  storage.setJSON(COMMENTS_KEY, filteredComments);
+
+  // Delete reports for this post
+  const reports = storage.getJSON<Report[]>(REPORTS_KEY, []);
+  const filteredReports = reports.filter(r => r.postId !== postId);
+  storage.setJSON(REPORTS_KEY, filteredReports);
+};
+
+/**
+ * Ban user (change role to 'banned')
+ * NOTE: In production, this would update the User in database
+ */
+export const banUser = (userId: string): void => {
+  // For now, just mark posts as hidden
+  const posts = getPosts();
+  posts.forEach(post => {
+    if (post.authorId === userId) {
+      post.text = '[Content Hidden - User Banned]';
+    }
+  });
+  storage.setJSON(POSTS_KEY, posts);
+  
+  // In real implementation, would update User.role to 'banned' or similar
+  console.warn(`User ${userId} has been banned. In production, update User record.`);
+};
+
+/**
+ * Dismiss report (remove from reports list)
+ */
+export const dismissReport = (reportId: string): void => {
+  const reports = storage.getJSON<Report[]>(REPORTS_KEY, []);
+  const filtered = reports.filter(r => r.id !== reportId);
+  storage.setJSON(REPORTS_KEY, filtered);
+};
+
 // --- Seeding ---
 
 export const seedCommunityIfEmpty = () => {

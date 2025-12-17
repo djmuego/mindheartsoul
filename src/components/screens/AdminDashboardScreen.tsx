@@ -1,11 +1,11 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useT } from '../../i18n/useT';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Check, X } from 'lucide-react';
+import { ChevronLeft, Check, X, AlertTriangle, Users, UserCheck } from 'lucide-react';
 import { getUsers, updateUserRole } from '../../services/usersService';
 import { getMentorProfiles, approveMentor } from '../../services/mentorsService';
-// import { User, MentorProfile } from '../../types';
+import { getAllReports } from '../../services/communityService';
 import { useSession } from '../../context/SessionContext';
 
 export const AdminDashboardScreen: React.FC = () => {
@@ -14,6 +14,11 @@ export const AdminDashboardScreen: React.FC = () => {
   const { user } = useSession();
   const [activeTab, setActiveTab] = useState<'users' | 'mentors'>('mentors');
   const [, setRefresh] = useState(0);
+  const [reportCount, setReportCount] = useState(0);
+
+  useEffect(() => {
+    setReportCount(getAllReports().length);
+  }, []);
 
   if (user?.role !== 'admin') {
     return <div className="p-8 text-center text-red-500">Access Denied</div>;
@@ -43,16 +48,65 @@ export const AdminDashboardScreen: React.FC = () => {
       </div>
 
       <div className="p-4">
+        {/* Quick Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <button
+            onClick={() => navigate('/admin/reports')}
+            className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all text-left"
+          >
+            <div className="flex items-center space-x-4">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${reportCount > 0 ? 'bg-red-100 dark:bg-red-900/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                <AlertTriangle size={24} className={reportCount > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-400'} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-slate-500 dark:text-slate-400">Community Reports</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {reportCount}
+                </p>
+              </div>
+            </div>
+          </button>
+
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/20 rounded-full flex items-center justify-center">
+                <UserCheck size={24} className="text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-slate-500 dark:text-slate-400">Pending Mentors</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {pendingMentors.length}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                <Users size={24} className="text-green-600 dark:text-green-400" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-slate-500 dark:text-slate-400">Total Users</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                  {users.length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
         <div className="flex space-x-2 mb-4">
           <button 
              onClick={() => setActiveTab('mentors')}
-             className={`px-4 py-2 rounded-full text-sm font-bold ${activeTab === 'mentors' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'}`}
+             className={`px-4 py-2 rounded-full text-sm font-bold ${activeTab === 'mentors' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}
           >
              Pending Mentors ({pendingMentors.length})
           </button>
           <button 
              onClick={() => setActiveTab('users')}
-             className={`px-4 py-2 rounded-full text-sm font-bold ${activeTab === 'users' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700'}`}
+             className={`px-4 py-2 rounded-full text-sm font-bold ${activeTab === 'users' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}
           >
              All Users ({users.length})
           </button>
