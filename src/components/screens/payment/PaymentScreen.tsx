@@ -25,6 +25,10 @@ import QRCode from 'qrcode';
 const APIRONE_ACCOUNT = import.meta.env.VITE_APIRONE_ACCOUNT || 'demo-account';
 const CALLBACK_URL = import.meta.env.VITE_APIRONE_CALLBACK_URL || window.location.origin + '/api/payment-callback';
 
+// Debug: Log Apirone Account ID
+console.log('🔑 Apirone Account ID:', APIRONE_ACCOUNT);
+console.log('📞 Callback URL:', CALLBACK_URL);
+
 const CRYPTO_CURRENCIES: ApiironeCurrency[] = [
   'btc',
   'eth',
@@ -85,6 +89,13 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
     setError('');
 
     try {
+      console.log('💰 Creating payment with:', {
+        account: APIRONE_ACCOUNT,
+        currency: selectedCurrency,
+        usdAmount,
+        cryptoAmount
+      });
+
       // Create payment record
       const newPayment = createPayment({
         userId: user.id,
@@ -99,7 +110,10 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
         }
       });
 
+      console.log('✅ Payment record created:', newPayment.id);
+
       // Generate payment address via Apirone
+      console.log('🔗 Generating Apirone address...');
       const addressData = await generatePaymentAddress({
         account: APIRONE_ACCOUNT,
         currency: selectedCurrency,
@@ -111,6 +125,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
         }
       });
 
+      console.log('✅ Address generated:', addressData.address);
+
       setPaymentAddress(addressData.address);
       setPayment(newPayment);
 
@@ -118,11 +134,14 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
       const qr = await QRCode.toDataURL(addressData.address, { width: 256 });
       setQrCodeUrl(qr);
 
+      console.log('✅ QR code generated');
+
       // Start checking for payment
       startPaymentCheck(newPayment.id, addressData.address);
 
     } catch (err: any) {
-      setError(err.message || 'Failed to create payment');
+      console.error('❌ Payment creation failed:', err);
+      setError(err.message || 'Failed to create payment. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -130,13 +149,17 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   const startPaymentCheck = (paymentId: string, address: string) => {
     setIsChecking(true);
+    console.log('🔍 Starting payment check for address:', address);
 
     const checkInterval = setInterval(async () => {
       try {
+        console.log('⏰ Checking balance...');
         const balance = await checkAddressBalance(APIRONE_ACCOUNT, address, selectedCurrency);
+        console.log('💵 Balance:', balance, 'Expected:', cryptoAmount);
         
         if (balance.total >= cryptoAmount) {
           // Payment received!
+          console.log('✅ Payment received!');
           clearInterval(checkInterval);
           setIsChecking(false);
 
@@ -147,12 +170,13 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           handlePaymentSuccess(actualPurpose, actualRelatedId);
         }
       } catch (err) {
-        console.error('Balance check error:', err);
+        console.error('❌ Balance check error:', err);
       }
     }, 10000); // Check every 10s
 
     // Stop checking after 1 hour
     setTimeout(() => {
+      console.log('⏱️ Payment check timeout (1 hour)');
       clearInterval(checkInterval);
       setIsChecking(false);
     }, 60 * 60 * 1000);

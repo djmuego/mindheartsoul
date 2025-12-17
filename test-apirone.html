@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apirone Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #0f172a;
+      color: #fff;
+    }
+    .container {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+    button {
+      background: #6366f1;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #4f46e5;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #334155;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .success { color: #22c55e; }
+    .error { color: #ef4444; }
+    h1 { color: #6366f1; }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 600;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      background: #334155;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔑 Apirone Test Page</h1>
+    <p>Account ID: <strong>apr-77ca139a69406cb6473746512a199a5b</strong></p>
+    
+    <div>
+      <label>Select Currency:</label>
+      <select id="currency">
+        <option value="btc">Bitcoin (BTC)</option>
+        <option value="eth">Ethereum (ETH)</option>
+        <option value="usdt@trx" selected>USDT (TRC-20)</option>
+        <option value="usdc@trx">USDC (TRC-20)</option>
+        <option value="usdt@eth">USDT (ERC-20)</option>
+        <option value="bnb">Binance Coin (BNB)</option>
+      </select>
+    </div>
+
+    <div>
+      <label>Amount (USD):</label>
+      <input type="number" id="amount" value="9.99" step="0.01">
+    </div>
+
+    <div style="margin-top: 20px;">
+      <button onclick="testAccountInfo()">1. Test Account Info</button>
+      <button onclick="testExchangeRate()">2. Test Exchange Rate</button>
+      <button onclick="testGenerateAddress()">3. Generate Payment Address</button>
+    </div>
+
+    <div id="result" class="result" style="display: none;"></div>
+  </div>
+
+  <script>
+    const ACCOUNT_ID = 'apr-77ca139a69406cb6473746512a199a5b';
+    const BASE_URL = 'https://apirone.com/api/v2';
+
+    function showResult(data, isError = false) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.style.display = 'block';
+      resultDiv.className = isError ? 'result error' : 'result success';
+      resultDiv.textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function testAccountInfo() {
+      try {
+        showResult('⏳ Fetching account info...', false);
+        
+        const response = await fetch(`${BASE_URL}/accounts/${ACCOUNT_ID}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+        }
+
+        showResult({
+          message: '✅ Account is valid!',
+          data: data
+        });
+      } catch (error) {
+        showResult({
+          message: '❌ Error fetching account info',
+          error: error.message
+        }, true);
+      }
+    }
+
+    async function testExchangeRate() {
+      try {
+        const currency = document.getElementById('currency').value;
+        showResult(`⏳ Fetching ${currency.toUpperCase()} exchange rate...`, false);
+        
+        const response = await fetch(`${BASE_URL}/ticker?currency=${currency}`);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+        }
+
+        const usdAmount = parseFloat(document.getElementById('amount').value);
+        const cryptoAmount = usdAmount / parseFloat(data.usd);
+
+        showResult({
+          message: '✅ Exchange rate fetched!',
+          currency: currency.toUpperCase(),
+          rate_usd: data.usd,
+          conversion: `${usdAmount} USD = ${cryptoAmount.toFixed(8)} ${currency.toUpperCase()}`
+        });
+      } catch (error) {
+        showResult({
+          message: '❌ Error fetching exchange rate',
+          error: error.message
+        }, true);
+      }
+    }
+
+    async function testGenerateAddress() {
+      try {
+        const currency = document.getElementById('currency').value;
+        showResult(`⏳ Generating ${currency.toUpperCase()} payment address...`, false);
+        
+        const response = await fetch(`${BASE_URL}/accounts/${ACCOUNT_ID}/addresses`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currency: currency,
+            callback: {
+              url: 'https://your-domain.com/api/payment-callback',
+              data: { test: true }
+            }
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+        }
+
+        showResult({
+          message: '✅ Payment address generated!',
+          currency: currency.toUpperCase(),
+          address: data.address,
+          created: data.created,
+          full_response: data
+        });
+      } catch (error) {
+        showResult({
+          message: '❌ Error generating address',
+          error: error.message
+        }, true);
+      }
+    }
+  </script>
+</body>
+</html>
