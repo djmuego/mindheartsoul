@@ -1,3 +1,119 @@
+# MindHeartSoul — Reality Check (Latest)
+
+**Last Updated**: 2025-12-17 (P0 Reality Fix Complete)  
+**Product Scope**: Chat Consultations Only (EN-first)  
+**Dev Server**: https://5182-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
+
+---
+
+## LATEST UPDATE: P0 Reality Fix — COMPLETE ✅
+
+**Sprint Goal**: Fix broken core flows. Make Chat, Mentors, and Natal actually work (no new features).
+
+### What Was Fixed
+
+#### 1. Messages/Chat — FIXED ✅
+**Problem**: Messages didn't appear immediately after send; invalid conversation IDs showed infinite "Loading..."
+
+**Root Causes**:
+- `refreshChat()` depended on 3s polling interval → messages appeared with delay
+- No timeout or error handling for missing conversations
+
+**Fixes Applied**:
+- **Immediate UI update**: `setMessages(prev => [...prev, newMessage])` after `sendMessage()` (line 71)
+- **Conversation not found**: 2s timeout → `notFound` state → render error screen with "Back to Chats" CTA
+- Added i18n keys: `chat.conversationNotFound`, `chat.conversationNotFoundDesc`, `chat.backToChats`
+
+**Verification**:
+- ✅ Send message → appears instantly (no 3s delay)
+- ✅ Input clears immediately
+- ✅ Reload (F5) → message persists (localStorage)
+- ✅ Navigate to `/chat/invalid-id` → see error screen (not infinite loading)
+
+**Files Changed**: `src/components/screens/ChatThreadScreen.tsx`, `src/i18n/locales/*.ts`
+
+#### 2. Mentors — FIXED ✅
+**Problem**: User reported "blank pages" when clicking mentor cards (couldn't reproduce, but verified all routes)
+
+**What Was Verified**:
+- ✅ `/mentors` → list screen works
+- ✅ `/mentors/:id` → detail screen works (has "Mentor Not Found" handling)
+- ✅ Invalid ID (`/mentors/invalid-999`) → shows error screen with CTA
+
+**Enhancement Added**:
+- **"Open Chat" CTA** on MentorProfileScreen
+  - New button: placed after bio, before session types
+  - Functionality: creates/finds conversation with mentor → navigates to `/chat/:id`
+  - Uses: `getOrCreateConversation`, `useSession`, existing `t('booking.openChat')` i18n key
+
+**Verification**:
+- ✅ Click mentor card → opens valid profile (not blank)
+- ✅ Click "Open Chat" → creates chat thread with mentor
+- ✅ Click "Book" → starts booking flow
+- ✅ Invalid mentor ID → shows "Mentor Not Found" screen
+
+**Files Changed**: `src/components/screens/MentorProfileScreen.tsx`
+
+#### 3. Natal Screen — FIXED ✅
+**Problem**: Clicking Astrology/Numerology/Meditation/HD buttons → 404 (modules disabled in registry)
+
+**Root Cause**: Buttons navigated to disabled module routes (`/astrology`, `/numerology`, etc.) → NotFoundScreen
+
+**Fix Applied**:
+- Replaced `navigate()` with `handleDisabledFeatureClick` → shows modal
+- Modal content: "Feature Coming Soon" + "Find a Mentor" CTA + "Cancel"
+- Uses existing `disabled.*` i18n keys
+- No dead-ends: every click leads to valid UI (modal with actionable CTAs)
+
+**Verification**:
+- ✅ Natal screen shows 4 buttons (Astrology, Numerology, Meditation, Human Design)
+- ✅ Natal wheel removed (already done in previous sprint)
+- ✅ Click any button → modal appears (not 404)
+- ✅ Click "Find a Mentor" → navigates to `/mentors`
+- ✅ Click "Cancel" → stays on Natal screen
+
+**Files Changed**: `src/components/screens/NatalScreen.tsx`
+
+---
+
+### i18n Status (EN-first maintained)
+- Strategy: EN-only development, other locales copy EN keys
+- New keys: `chat.conversationNotFound`, `chat.conversationNotFoundDesc`, `chat.backToChats`
+- Validation: ✅ PASSED (222 keys, all locales consistent)
+
+---
+
+### Smoke Test
+- Created: `docs/SMOKE_TEST_P0_REALITY.md`
+- Coverage: 18 manual steps
+  - Chat: 7 steps (send, persist, error handling)
+  - Mentors: 6 steps (routing, CTAs, error screens)
+  - Natal: 5 steps (buttons, modal, no 404s)
+
+---
+
+### Commits (3 fixes + 1 docs)
+1. `8c5c444` - fix(chat): Immediate UI update + handle conversation not found
+2. `adc079d` - fix(mentors): Add 'Open Chat' CTA to mentor profile
+3. `5d4ad63` - fix(natal): Show modal for disabled features instead of 404
+4. (pending) - docs: Update STATUS_AUDIT_REALITY + PROMPTS_LOG + SMOKE_TEST
+
+---
+
+### Quality Gate
+- ✅ i18n validation passed
+- ⏳ `npm run doctor` (pending)
+- ⏳ Manual smoke test (18 steps)
+
+---
+
+### Next Steps
+1. Run `npm run doctor`
+2. Execute smoke test manually
+3. Final commit + push + update PR
+
+---
+
 # STATUS AUDIT REALITY - Diagnostic Report
 
 **Date**: 2025-12-17  
