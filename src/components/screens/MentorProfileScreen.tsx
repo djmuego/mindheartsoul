@@ -13,7 +13,25 @@ export const MentorProfileScreen: React.FC = () => {
   const mentor = getMentorById(id || '');
 
   if (!mentor) {
-    return <div className="p-8 text-center">Mentor not found</div>;
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md text-center shadow-lg">
+          <div className="text-6xl mb-4">🤷</div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            Mentor Not Found
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">
+            This mentor profile doesn't exist or has been removed.
+          </p>
+          <button
+            onClick={() => navigate('/mentors')}
+            className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-bold transition-colors"
+          >
+            Back to Mentors
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
