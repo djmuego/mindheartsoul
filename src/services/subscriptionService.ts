@@ -72,6 +72,10 @@ export const activatePro = (
   
   cleanSubs.push(newSub);
   storage.setJSON(STORAGE_KEYS.SUBSCRIPTION, cleanSubs);
+  
+  // Clear expiry notification flag on new activation
+  clearExpiryNotificationFlag(userId);
+  
   return newSub;
 };
 
@@ -113,7 +117,45 @@ export const expireSubscription = (userId: string): void => {
   if (index >= 0) {
     subs[index].status = 'expired';
     storage.setJSON(STORAGE_KEYS.SUBSCRIPTION, subs);
+    
+    // Send expiry notification (dedupe via storage flag)
+    checkAndNotifySubscriptionExpiry(userId);
   }
+};
+
+/**
+ * Check and send expiry notification (dedupe to prevent spam)
+ */
+export const checkAndNotifySubscriptionExpiry = (userId: string): void => {
+  const NOTIF_KEY = `sub_expiry_notif_${userId}`;
+  const notifFlags = storage.getJSON<Record<string, boolean>>(NOTIF_KEY, {});
+  const alreadyNotified = notifFlags[userId];
+  
+  // Only notify once per expiry event
+  if (!alreadyNotified) {
+    const { pushNotification } = require('./notificationsService');
+    
+    pushNotification(
+      userId,
+      'subscription_expired',
+      'notifications.subscriptionExpired',
+      { timestamp: new Date().toISOString() }
+    );
+    
+    // Mark as notified (clear on renewal)
+    notifFlags[userId] = true;
+    storage.setJSON(NOTIF_KEY, notifFlags);
+  }
+};
+
+/**
+ * Clear expiry notification flag (call on renewal)
+ */
+export const clearExpiryNotificationFlag = (userId: string): void => {
+  const NOTIF_KEY = `sub_expiry_notif_${userId}`;
+  const notifFlags = storage.getJSON<Record<string, boolean>>(NOTIF_KEY, {});
+  delete notifFlags[userId];
+  storage.setJSON(NOTIF_KEY, notifFlags);
 };
 
 /**

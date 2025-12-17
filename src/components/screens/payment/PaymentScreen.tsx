@@ -218,12 +218,26 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   const handlePaymentSuccess = (purpose: PaymentPurpose, relatedId?: string) => {
     if (purpose === 'pro_subscription') {
-      // Import activatePro from subscriptionService
+      // Import services
       const { activatePro } = require('../../../services/subscriptionService');
+      const { pushNotification } = require('../../../services/notificationsService');
       
       // Activate Pro subscription with plan
       const plan = subscriptionPlan || 'pro_monthly';
-      activatePro(user!.id, plan, payment?.id);
+      const subscription = activatePro(user!.id, plan, payment?.id);
+      
+      // Create subscription_purchased notification
+      if (subscription) {
+        pushNotification(
+          user!.id,
+          'subscription_purchased',
+          'notifications.subscriptionPurchased',
+          { 
+            plan,
+            expiresAtIso: subscription.expiresAtIso
+          }
+        );
+      }
       
       navigate('/pro?success=true');
     } else if (purpose === 'booking' && relatedId) {
