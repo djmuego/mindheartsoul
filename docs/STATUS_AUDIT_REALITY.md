@@ -1,6 +1,58 @@
 # MindHeartSoul — Reality Check & Product Status
 
 **Last Updated:** 2025-12-17  
+**Current Product Scope:** **Chat Consultations Only** (EN-first development)
+
+**Dev Server:** https://5182-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
+
+---
+
+## 🚀 LATEST UPDATE: EN-first Implementation (2025-12-17)
+
+### Chat Consultations Only - COMPLETE ✅
+
+**PROMPT Compliance:**
+- ✅ **A) Video Removed**: No video UI, routes, or services
+- ✅ **B) Product Scope Narrowed**: Only Mentors/Booking/Sessions/Messages remain
+- ✅ **C) Mentors → Booking → Chat Cycle**: Fully functional with MySessionsScreen
+- ✅ **D) Messages "железобетон"**: Persistence, AI fallback, Pro gating all working
+- ✅ **E) Graceful Module Disabling**: DisabledScreen for old routes
+
+**i18n EN-first Strategy:**
+- All locales (EN/RU/DE/ES/PL) contain English text
+- RU/DE/ES/PL are full copies of EN (with locale-specific __meta)
+- Avoids missing keys, no translation overhead during development
+- ✅ i18n validation: PASSED (219 keys, all locales consistent)
+- 📝 TODO: Backfill real translations in separate PR after core is stable
+
+**Navigation:**
+- Bottom nav: **Mentors (20) → Sessions (25) → Messages (30) → Profile (40)**
+- ✅ Max 4 items (PROMPT requirement met)
+- Home route exists but no bottom nav tab
+
+**New Features:**
+- **MySessionsScreen** (`/sessions`): User's booking list with status badges
+  - Groups bookings: Confirmed / Pending / History
+  - "Open Chat" CTA for confirmed bookings
+  - "Pay Now" CTA for pending bookings
+  - Empty state with "Find a Mentor" CTA
+
+**Home Screen:**
+- Simplified to consultation-focused sections only
+- Removed: Birth Data CTA, Continue Learning, Featured Content, Community Highlights
+- Kept: Upcoming Sessions, Recommended Mentors, Notifications, Daily Insight
+
+**Verification:**
+- ✅ Dev server: Running on port 5182
+- ✅ i18n check: All locales consistent
+- ✅ Smoke test: 12-step EN-only test created
+- ✅ Core flow: Mentors → Booking → Sessions → Chat works end-to-end
+
+---
+
+# MindHeartSoul — Reality Check & Product Status
+
+**Last Updated:** 2025-12-17  
 **Current Product Scope:** **Chat Consultations Only** (Mentors → Booking → Messages)
 
 **Dev Server:** https://5181-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai

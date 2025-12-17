@@ -105,3 +105,117 @@ Transform MindHeartSoul into a focused "Chat Consultations Only" product:
 - [ ] `npm run doctor` verification (pending)
 - [ ] Home screen update for consultation focus (pending)
 - [ ] STATUS_AUDIT_REALITY.md update (pending)
+
+---
+
+## 2025-12-17: Chat Consultations Only - EN-first Implementation
+
+### Goal
+Implement "Chat Consultations Only" product with **EN-first i18n strategy**:
+- All new text in English only (no translations during development)
+- RU/DE/ES/PL locales are EN aliases (avoid missing keys)
+- Focus on core flow: Mentors → Booking → Messages
+- Max 4 navigation items: Mentors / Sessions / Messages / Profile
+
+### Core Requirements (PROMPT)
+
+**A) Remove Video** ✅
+- Already removed in previous sprint (SessionJoinScreen, video routes)
+- BookingDetailScreen shows "Open Chat" instead of "Join Video"
+
+**B) Narrow Product Scope** ✅
+- Disabled modules: Community, Natal, Courses, Astrology, Numerology, Meditation, Human Design
+- Kept core: Mentors, Sessions (NEW), Messages, Profile, Settings, Pro, Admin, MentorDashboard, Payments
+
+**C) Close Mentors → Booking → Chat Cycle** ✅
+- Created **MySessionsScreen**: user's booking list with status
+- Shows Confirmed / Pending / History sections
+- "Open Chat" CTA on confirmed bookings
+- "Pay Now" CTA on pending bookings
+- Empty state with "Find a Mentor" CTA
+
+**D) Messages "железобетон"** ✅ (already verified)
+- Messages persist in localStorage (via chatService)
+- Input clears immediately after send
+- AI Assistant graceful fallback if no API key
+- Pro gating for AI (non-Pro shows upsell)
+- Basic chat works WITHOUT API key or Pro status
+
+**E) Graceful Module Disabling** ✅
+- DisabledScreen for old routes (created in previous sprint)
+- All disabled routes show "Feature Disabled" screen
+
+### Implementation Details
+
+**i18n EN-first Strategy:**
+```typescript
+// RU/DE/ES/PL files now:
+export default {
+  __meta: { code: 'ru', name: 'Русский', nativeName: 'Русский' },
+  ...en // All EN keys copied
+}
+```
+- All locales have same 219 keys
+- All text is in English
+- Easy to backfill real translations later in separate PR
+
+**Navigation Update:**
+- Removed Home from bottom nav (route exists, just no tab)
+- Added Sessions module (order: 25)
+- Final bottom nav: **Mentors(20) → Sessions(25) → Messages(30) → Profile(40)**
+- ✅ Max 4 items requirement met
+
+**Home Screen Simplification:**
+Removed sections:
+- ❌ CTA Profile Birth Data (Astrology/HD disabled)
+- ❌ Continue Learning (Courses disabled)
+- ❌ Featured Content (content modules disabled)
+- ❌ Community Highlights (Community disabled)
+
+Kept sections:
+- ✅ Upcoming Sessions (core feature)
+- ✅ Recommended Mentors (core feature)
+- ✅ Notifications Preview (booking updates)
+- ✅ Daily Insight (UX friendliness)
+
+### Files Changed
+
+**NEW:**
+- `src/components/screens/MySessionsScreen.tsx` (booking list)
+- `src/app/modules/sessionsModule.tsx` (Sessions module)
+- `docs/SMOKE_TEST_CHAT_CONSULTATIONS_EN.md` (12-step test)
+
+**MODIFIED:**
+- `src/i18n/locales/*.ts` (EN-first strategy: all locales = EN aliases)
+- `src/app/modules/registry.ts` (added sessionsModule)
+- `src/app/modules/homeModule.tsx` (removed bottom nav)
+- `src/components/screens/ChatThreadScreen.tsx` (clarifying comments)
+- `src/features/home/sections/registry.ts` (simplified sections)
+
+### Commits
+
+1. `8d78ae3` - i18n EN-first strategy
+2. `ab0fbbc` - MySessionsScreen + navigation (4 items)
+3. `80da8d3` - Chat verification + Home simplification
+
+### Checkpoints
+
+- [x] i18n validation: ✅ PASSED (219 keys, all locales consistent)
+- [x] Navigation: ✅ 4 items (Mentors/Sessions/Messages/Profile)
+- [x] Dev server: ✅ Running on port 5182
+- [x] Smoke test: ✅ Created (12 steps, EN-only)
+- [x] Core flow: Mentors → Booking → Sessions → Chat → ✅ WORKS
+
+### Dev URL
+
+https://5182-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
+
+### Next Steps (Separate PR)
+
+After core functionality is stable:
+1. Backfill real translations (RU/DE/ES/PL)
+2. Restore language switcher (if hidden)
+3. Run smoke test in all locales
+4. Production deployment
+
+---
