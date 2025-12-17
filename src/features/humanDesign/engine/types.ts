@@ -5,13 +5,25 @@ export type HDType = 'Generator' | 'Manifesting Generator' | 'Projector' | 'Mani
 export type HDAuthority = 'Sacral' | 'Emotional' | 'Splenic' | 'Ego' | 'Self' | 'None';
 export type HDProfile = '1/3' | '1/4' | '2/4' | '2/5' | '3/5' | '3/6' | '4/6' | '4/1' | '5/1' | '5/2' | '6/2' | '6/3';
 
+export interface HDCenters {
+  head: boolean;
+  ajna: boolean;
+  throat: boolean;
+  g: boolean;
+  heart: boolean;
+  sacral: boolean;
+  root: boolean;
+  spleen: boolean;
+  solar: boolean;
+}
+
 export interface HumanDesignProfile {
   type: HDType;
   authority: HDAuthority;
   profile: HDProfile;
   strategy: string;
   theme: string; // Not-Self Theme
-  centers: Record<string, boolean>; // Defined or Undefined
+  centers: HDCenters; // Defined or Undefined
 }
 
 export interface HumanDesignEngine {
