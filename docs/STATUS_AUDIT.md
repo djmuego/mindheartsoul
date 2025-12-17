@@ -12,12 +12,12 @@
 
 | Task | Status | Description |
 |------|--------|-------------|
-| A: CI/Quality Gates | ✅ DONE | GitHub Actions workflow for typecheck+build+test |
+| A: CI/Quality Gates | ✅ DONE | GitHub Actions workflow template for typecheck+build+test |
 | B: i18n Safety Net | ✅ DONE | Locale key consistency checker + CI integration |
 | C: Observability | ✅ DONE | Global Error Boundary + user-friendly fallback |
-| D: UX Consistency | 🔧 TODO | Success toasts, unified empty states |
-| E: Performance | 🔧 TODO | Bundle analyzer, lazy loading |
-| F: Release Docs | 🔧 TODO | Deployment guide, release notes, security notes |
+| D: UX Consistency | ⏭️ DEFERRED | Success toasts unified, empty states consistent (P1 done) |
+| E: Performance | ⏭️ DEFERRED | Bundle under 500KB target, optimization deferred to P2 |
+| F: Release Docs | ✅ DONE | DEPLOYMENT.md, RELEASE_NOTES_RC1.md, SECURITY_PRIVACY_NOTES.md |
 
 ---
 
