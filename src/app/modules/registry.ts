@@ -2,6 +2,7 @@
 import { AppModule, RegistryContext } from './types';
 import { homeModule } from './homeModule';
 import { mentorsModule } from './mentorsModule';
+import { sessionsModule } from './sessionsModule';
 import { natalModule } from './natalModule';
 import { communityModule } from './communityModule';
 import { profileModule } from './profileModule';
@@ -22,6 +23,7 @@ import { meditationModule } from './meditationModule';
 export const ALL_MODULES: AppModule[] = [
   homeModule,
   mentorsModule,
+  sessionsModule, // NEW: My Sessions list
   // natalModule, // DISABLED - Not part of Chat Consultations product
   // communityModule, // DISABLED - Not part of Chat Consultations product
   profileModule,

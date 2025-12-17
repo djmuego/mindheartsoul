@@ -4,6 +4,8 @@ export default {
 
   'nav.home': 'Home',
   'nav.mentors': 'Mentors',
+  'nav.sessions': 'My Sessions',
+  'nav.messages': 'Messages',
   'nav.natal': 'Natal',
   'nav.community': 'Community',
   'nav.profile': 'Profile',

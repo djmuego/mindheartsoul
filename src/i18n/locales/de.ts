@@ -4,10 +4,11 @@
 
 export default {
     __meta: { code: 'de', name: 'Deutsch', nativeName: 'Deutsch' },
-  __meta: { code: 'en', name: 'English', nativeName: 'English' },
 
   'nav.home': 'Home',
   'nav.mentors': 'Mentors',
+  'nav.sessions': 'My Sessions',
+  'nav.messages': 'Messages',
   'nav.natal': 'Natal',
   'nav.community': 'Community',
   'nav.profile': 'Profile',
