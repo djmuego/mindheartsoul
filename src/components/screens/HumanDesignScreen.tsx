@@ -1,18 +1,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Hexagon, Zap, Shield, Info } from 'lucide-react';
+import { ChevronLeft, Hexagon, Info } from 'lucide-react';
 import { useT } from '../../i18n/useT';
 import { useSession } from '../../context/SessionContext';
 import { humanDesignEngineMock } from '../../features/humanDesign/engine/humanDesignEngineMock';
 import { HumanDesignProfile } from '../../features/humanDesign/engine/types';
-import { BodygraphChart } from '../humanDesign/BodygraphChart';
+import { BodygraphChartPro } from '../humanDesign/BodygraphChartPro';
+import { ProfileSidePanels } from '../humanDesign/ProfileSidePanels';
 import { CenterDescriptions } from '../humanDesign/CenterDescriptions';
 
 export const HumanDesignScreen: React.FC = () => {
   const navigate = useNavigate();
   const t = useT();
-  const { birthProfile } = useSession();
+  const { birthProfile, session } = useSession();
   const [profile, setProfile] = useState<HumanDesignProfile | null>(null);
   const [showDescriptions, setShowDescriptions] = useState(false);
 
@@ -56,22 +57,22 @@ export const HumanDesignScreen: React.FC = () => {
   }
 
   return (
-    <div className="min-h-full bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors duration-200">
+    <div className="min-h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col">
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 p-4 shadow-sm border-b border-slate-100 dark:border-slate-800 flex items-center space-x-4 sticky top-0 z-20">
+      <div className="bg-slate-900/80 backdrop-blur-sm p-4 shadow-lg border-b border-slate-800 flex items-center space-x-4 sticky top-0 z-20">
         <button 
           onClick={() => navigate(-1)} 
-          className="p-2 -ml-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+          className="p-2 -ml-2 rounded-full hover:bg-slate-800 text-slate-300 transition-colors"
         >
           <ChevronLeft size={24} />
         </button>
-        <h1 className="text-xl font-bold text-slate-900 dark:text-white flex-1">{t('hd.title')}</h1>
+        <h1 className="text-xl font-bold text-white flex-1">{t('hd.title')}</h1>
         <button
           onClick={() => setShowDescriptions(!showDescriptions)}
           className={`p-2 rounded-full transition-colors ${
             showDescriptions 
-              ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-400' 
-              : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300'
+              ? 'bg-indigo-600 text-white' 
+              : 'hover:bg-slate-800 text-slate-400'
           }`}
         >
           <Info size={20} />
@@ -79,81 +80,67 @@ export const HumanDesignScreen: React.FC = () => {
       </div>
 
       <div className="p-6 space-y-6 pb-24">
-        {/* Type Summary Card */}
-        <div className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-2xl p-6 shadow-lg relative overflow-hidden">
-           <Hexagon className="absolute -top-4 -right-4 text-white/10" size={120} />
-           <div className="relative z-10">
-             <p className="text-white/80 text-xs uppercase tracking-wider mb-1">Your Energy Type</p>
-             <h2 className="text-3xl font-bold text-white mb-3">{profile.type}</h2>
-             <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium">
-                  {profile.authority} Authority
-                </span>
-                <span className="px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-lg text-sm font-medium">
-                  {profile.profile} Profile
-                </span>
-             </div>
-           </div>
-        </div>
+        {/* Profile Side Panels */}
+        <ProfileSidePanels profile={profile} userName={session.userName} />
 
-        {/* Strategy & Theme */}
-        <div className="grid grid-cols-2 gap-4">
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex items-center space-x-2 mb-2 text-indigo-600 dark:text-indigo-400">
-                <Zap size={20} />
-                <span className="font-bold text-sm">Strategy</span>
+        {/* Bodygraph Chart - Full Width */}
+        <div className="bg-slate-900/50 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-sm">
+          <div className="p-4 border-b border-slate-800 bg-slate-900/80">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-white">Бодиграф</h3>
+                <p className="text-sm text-slate-400 mt-1">
+                  Карта вашей энергетической системы
+                </p>
               </div>
-              <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">{profile.strategy}</p>
-           </div>
-           <div className="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="flex items-center space-x-2 mb-2 text-red-500 dark:text-red-400">
-                <Shield size={20} />
-                <span className="font-bold text-sm">Theme</span>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1.5 bg-slate-800/50 rounded-lg px-3 py-1.5">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span className="text-xs text-slate-300">Определено</span>
+                </div>
+                <div className="flex items-center space-x-1.5 bg-slate-800/50 rounded-lg px-3 py-1.5">
+                  <div className="w-2 h-2 bg-slate-500 rounded-full"></div>
+                  <span className="text-xs text-slate-300">Открыто</span>
+                </div>
               </div>
-              <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">{profile.theme}</p>
-           </div>
-        </div>
-
-        {/* Bodygraph Chart */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg overflow-hidden">
-          <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-            <h3 className="font-bold text-slate-900 dark:text-white">Your Bodygraph</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Visual map of your energy centers and channels
-            </p>
+            </div>
           </div>
           <div className="p-6">
-            <BodygraphChart centers={profile.centers} type={profile.type} size="large" />
+            <BodygraphChartPro 
+              centers={profile.centers} 
+              type={profile.type}
+              gates={[64, 47, 17, 62, 20, 34, 10, 25, 51]}
+            />
           </div>
         </div>
 
         {/* Center Descriptions (toggleable) */}
         {showDescriptions && (
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg p-6">
+          <div className="bg-slate-900/50 rounded-2xl border border-slate-800 shadow-2xl p-6 backdrop-blur-sm">
             <CenterDescriptions centers={profile.centers} />
           </div>
         )}
 
-        {/* Centers Quick View (when descriptions hidden) */}
+        {/* Centers Quick View */}
         {!showDescriptions && (
-          <div className="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800 shadow-lg backdrop-blur-sm">
              <div className="flex items-center justify-between mb-4">
-               <h3 className="font-bold text-slate-900 dark:text-white">Centers Overview</h3>
+               <h3 className="font-bold text-white">Обзор Центров</h3>
                <button
                  onClick={() => setShowDescriptions(true)}
-                 className="text-sm text-indigo-600 dark:text-indigo-400 font-medium hover:underline"
+                 className="text-sm text-indigo-400 font-medium hover:text-indigo-300 transition-colors"
                >
-                 Show Details
+                 Показать Детали
                </button>
              </div>
-             <div className="grid grid-cols-3 gap-2 text-center">
+             <div className="grid grid-cols-3 gap-3">
                 {Object.entries(profile.centers).map(([center, defined]) => (
                   <div 
                     key={center} 
-                    className={`p-3 rounded-lg text-xs font-bold capitalize transition-all ${
+                    className={`p-4 rounded-xl text-xs font-bold capitalize transition-all ${
                       defined 
-                        ? `bg-indigo-600 text-white shadow-md` 
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                        ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg' 
+                        : 'bg-slate-800 text-slate-500 border border-slate-700'
                     }`}
                   >
                     {center}
