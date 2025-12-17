@@ -11,7 +11,7 @@
 | Module | Status | P0 | P1 | Notes |
 |--------|--------|----|----|-------|
 | Auth | ✅ DONE | ✅ | ✅ | Login/Register/Onboarding complete |
-| Home | ⚠️ P1 TARGET | ✅ | 🔧 | Sections need real data + empty states |
+| Home | ✅ DONE | ✅ | ✅ | All sections show real data + product empty states |
 | Profile | ✅ DONE | ✅ | ✅ | Profile + Blueprint + Settings |
 | Natal | ✅ DONE | ✅ | ✅ | Birth profile + charts working |
 | Astrology | 📋 DEFERRED | N/A | N/A | Mock data, engine deferred to future |
@@ -26,7 +26,7 @@
 | Pro | ✅ DONE | ✅ | ✅ | Monthly ($9.99) / Yearly ($99) with expiry |
 | Admin | ✅ DONE | ✅ | ✅ | Dashboard + Reports moderation |
 | Mentor Dashboard | ✅ DONE | ✅ | ✅ | Full booking management with Approve/Decline |
-| Notifications | ⚠️ P1 TARGET | ✅ | 🔧 | Core works, needs more event triggers |
+| Notifications | ✅ DONE | ✅ | ✅ | All key event triggers implemented with dedupe |
 
 **Legend:**
 - ✅ DONE — Fully functional
@@ -156,12 +156,12 @@
 
 ---
 
-### 3. Home Sections — Real Data + Empty States 🔧
-**Current Gap:**
-- Home shows sections ✅
-- Some sections hardcoded/placeholder ⚠️
-- **Missing:** Connect to real data sources
-- **Missing:** Product-quality empty states
+### 3. Home Sections — Real Data + Empty States ✅ DONE
+**Completed (Commit d4b6aaf):**
+- ✅ ContinueLearningSection added: Last active course with progress
+- ✅ NotificationsPreviewSection added: Latest 3 notifications with unread badges
+- ✅ All sections connected to real localStorage data (courses, notifications, bookings)
+- ✅ Product-grade empty states for all sections (icons + copy + CTAs)
 
 **P1 Requirements:**
 - **Featured Mentors:** Pull from mentorsService (top 3-5)
@@ -185,19 +185,20 @@
 
 ---
 
-### 4. Notifications — Event Triggers 🔧
-**Current Gap:**
-- Notification system works ✅
-- `pushNotification()` and `addNotification()` exist ✅
-- **Missing:** Triggers for key events
+### 4. Notifications — Event Triggers ✅ DONE
+**Completed (Commit d190bb6):**
+- ✅ Subscription purchased: Notification sent on Pro activation with plan details
+- ✅ Subscription expired: One-time dedupe notification using localStorage flag
+- ✅ Lesson completed: Notification sent on lesson completion (Task 1)
+- ✅ Booking approved/declined: Notifications sent from mentor dashboard (Task 2)
+- ✅ Booking confirmed: Notification sent on payment success (P0)
 
-**P1 Requirements:**
-Add notification triggers for:
-1. **Subscription Purchased:** "Pro subscription activated (Monthly/Yearly)"
-2. **Subscription Expired:** "Your Pro subscription has expired" (one-time, no spam)
-3. **Course Lesson Completed:** "Lesson completed: {title}"
-4. **Booking Confirmed:** Already done ✅
-5. **Report Moderated:** "Your report has been reviewed" (optional)
+**Notification Flow Implemented:**
+1. Subscription purchased → `PaymentScreen` → `activatePro()` → notification
+2. Subscription expired → `isSubscriptionActive()` → `expireSubscription()` → dedupe check → notification (ONCE)
+3. Lesson completed → `LessonScreen` → `markLessonCompleted()` → notification
+4. Booking approved/declined → `MentorBookingsScreen` → `approve/declineBooking()` → notification
+5. Booking confirmed → `PaymentScreen` → `confirmBooking()` → notification
 
 **Files to Modify:**
 - `src/components/screens/payment/PaymentScreen.tsx` (subscription purchased)
@@ -254,16 +255,19 @@ Add notification triggers for:
 - [x] Add i18n keys
 - [x] Test + Doctor check (Commit 488a2a4)
 
-### Step 4: Home Sections — Data + Empty States
-- [ ] Connect sections to services
-- [ ] Add product-quality empty states
-- [ ] Test + Doctor check
+### Step 4: Home Sections — Data + Empty States ✅ DONE
+- [x] Connect sections to services
+- [x] Add product-quality empty states
+- [x] Add ContinueLearningSection
+- [x] Add NotificationsPreviewSection
+- [x] Test + Doctor check (Commit d4b6aaf)
 
-### Step 5: Notifications — Event Triggers
-- [ ] Add subscription purchased notification
-- [ ] Add lesson completed notification
-- [ ] Add subscription expired check (one-time)
-- [ ] Test + Doctor check
+### Step 5: Notifications — Event Triggers ✅ DONE
+- [x] Add subscription purchased notification
+- [x] Add lesson completed notification
+- [x] Add subscription expired check (one-time dedupe)
+- [x] Add booking approve/decline notifications
+- [x] Test + Doctor check (Commit d190bb6)
 
 ### Step 6: Final Smoke Test
 - [ ] Run all P0 + P1 smoke tests
@@ -289,6 +293,7 @@ Add notification triggers for:
 
 ---
 
-**Status:** P1 TASKS 1-2 COMPLETE (Courses + Mentor Dashboard)  
-**Quality Current:** TS: 0 errors | Tests: 31/31 | Bundle: 479KB  
-**Next:** P1 Tasks 3-4 (Home Sections + Notifications)
+**Status:** ✅ P1 COMPLETE - ALL 4 TASKS DONE  
+**Quality Final:** TS: 0 errors | Tests: 31/31 | Bundle: 489KB  
+**Commits:** 09af0db (Task 1) + 488a2a4 (Task 2) + d4b6aaf (Task 3) + d190bb6 (Task 4)  
+**Next:** Documentation updates + Smoke tests

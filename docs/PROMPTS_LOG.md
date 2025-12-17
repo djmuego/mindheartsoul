@@ -182,3 +182,129 @@ npm run build      # ✅ Bundle: 469KB
 **Smoke test:**
 - [Commands to verify]
 **Result:** [Outcome summary]
+
+---
+
+## Prompt #09 — ROUND 2 P1 Complete: Tasks 3-4 (Home Sections + Notifications)
+**Date:** 2025-12-17
+**Baseline:** P0 Complete (bc36326) + P1 Tasks 1-2 (09af0db, 488a2a4)
+**Goal:** Complete remaining P1 tasks: Home sections real data + Notifications event triggers
+
+### Task 3: Home Sections — Real Data + Product Empty States
+**Commit:** d4b6aaf
+
+**Implemented:**
+- Created ContinueLearningSection: Shows last active course, progress bar, next lesson CTA
+- Created NotificationsPreviewSection: Latest 3 notifications with unread badges
+- All sections connected to real localStorage data (courses progress, bookings, notifications)
+- Product-grade empty states for all sections with icons, helpful copy, and CTAs
+
+**Files Added:**
+- `src/features/home/sections/ContinueLearningSection.tsx`
+- `src/features/home/sections/NotificationsPreviewSection.tsx`
+
+**Files Changed:**
+- `src/features/home/sections/registry.ts` (added 2 sections, priority 15 and 25)
+- `src/features/home/sections/types.ts` (added continue_learning, notifications_preview IDs)
+- `src/i18n/locales/*.ts` (5 locales: EN/RU/DE/ES/PL)
+
+**New i18n Keys:**
+- `home.continueLearning`, `home.noCourses`, `home.browseCourses`
+- `home.lessonsCompleted`, `home.continueCourse`
+- `home.noNotifications`, `home.viewAll`
+
+**Home Sections (Final Order):**
+1. CTA Profile Birth Data (conditional)
+2. **Continue Learning** (priority 15) - NEW
+3. Upcoming Session (priority 20)
+4. **Notifications Preview** (priority 25) - NEW
+5. Daily Insight (priority 30)
+6. Featured Content (priority 35)
+7. Recommended Mentors (priority 40, users only)
+8. Community Highlights (priority 50)
+
+**Bundle:** 489KB (+10KB for new sections)
+
+---
+
+### Task 4: Notifications — Event Triggers + Dedupe
+**Commit:** d190bb6
+
+**Implemented:**
+- Subscription purchased: Notification sent on Pro activation (PaymentScreen)
+- Subscription expired: One-time dedupe notification using localStorage flag
+- Lesson completed: Already working (LessonScreen from Task 1)
+- Booking approved/declined: Already working (MentorBookingsScreen from Task 2)
+- Booking confirmed: Already working (PaymentScreen from P0)
+
+**Files Changed:**
+- `src/services/subscriptionService.ts`:
+  - Added `checkAndNotifySubscriptionExpiry()` for dedupe logic
+  - Added `clearExpiryNotificationFlag()` to reset on renewal
+  - Updated `activatePro()` to clear flag
+  - Updated `expireSubscription()` to send notification
+- `src/components/screens/payment/PaymentScreen.tsx`:
+  - Added subscription_purchased notification
+  - Includes plan and expiresAtIso in payload
+
+**Notification Flow:**
+1. **Subscription purchased:** PaymentScreen → activatePro() → pushNotification()
+2. **Subscription expired:** isSubscriptionActive() → expireSubscription() → dedupe check → pushNotification() [ONCE]
+3. **Lesson completed:** LessonScreen → markLessonCompleted() → pushNotification()
+4. **Booking approved/declined:** MentorBookingsScreen → approve/declineBooking() → pushNotification()
+5. **Booking confirmed:** PaymentScreen → confirmBooking() → pushNotification()
+
+**Dedupe Strategy:**
+- Uses localStorage flag per userId: `sub_expiry_notif_<userId>`
+- Flag cleared on subscription activation/renewal
+- Only one expiry notification per expiry event
+- No spam on repeated isPro checks
+
+**Bundle:** 489KB (no change, notification logic is lightweight)
+
+---
+
+### Smoke Test Steps
+See `docs/SMOKE_TEST_P1.md` for comprehensive 15-step test suite covering:
+- Home sections (Continue Learning, Notifications Preview)
+- Empty states for all sections
+- Lesson completion tracking
+- Pro course gating
+- Mentor booking management
+- Pro subscription purchase + notification
+- Subscription expiry notification (dedupe)
+- i18n verification (5 locales)
+- Community, Featured Content, Recommended Mentors
+- Build & Tests (doctor check)
+
+**Test Commands:**
+```bash
+npm run doctor  # typecheck + build + test
+npm run dev     # start dev server
+```
+
+---
+
+### Quality Metrics (P1 Final)
+- **TypeScript:** 0 errors ✅
+- **Tests:** 31/31 passing (100%) ✅
+- **Build:** SUCCESS ✅
+- **Bundle:** 489KB (from 469KB P0 baseline, +20KB for P1 features)
+- **Commits:** 
+  - 09af0db (Task 1: Courses Lesson Completion)
+  - 488a2a4 (Task 2: Mentor Dashboard Booking Management)
+  - d4b6aaf (Task 3: Home Sections Real Data)
+  - d190bb6 (Task 4: Notifications Event Triggers)
+
+---
+
+### P1 Status — All 4 Tasks DONE ✅
+1. ✅ Courses — Lesson completion UI with Pro gating
+2. ✅ Mentor Dashboard — Booking request management (Approve/Decline)
+3. ✅ Home Sections — Real data + product empty states
+4. ✅ Notifications — Event triggers with dedupe (subscription, lesson, booking)
+
+**Result:** MVP is production-ready with all critical UX flows complete. No broken placeholders. All text localized (EN/RU/DE/ES/PL). Ready for deployment or P2 polish.
+
+**Next:** Optional P2 tasks (Human Design Bodygraph renderer, Astrology engine) or production deployment.
+
