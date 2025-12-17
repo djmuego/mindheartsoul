@@ -77,6 +77,21 @@ export const MentorDashboardScreen: React.FC = () => {
               </div>
             </div>
           </button>
+
+          <button 
+            onClick={() => navigate('/courses/manage')}
+            className="w-full flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800"
+          >
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-slate-900 dark:text-white">Manage Courses</h3>
+                <p className="text-sm text-slate-500">Create & edit courses</p>
+              </div>
+            </div>
+          </button>
         </div>
       </div>
     </div>

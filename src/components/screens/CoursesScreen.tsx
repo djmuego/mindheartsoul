@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
 import { ChevronLeft, Lock, BookOpen } from 'lucide-react';
 import { useT } from '../../i18n/useT';
-import { getCourses, seedCoursesIfEmpty, getProgress } from '../../services/coursesService';
+import { getPublishedCourses, seedCoursesIfEmpty, getProgress } from '../../services/coursesService';
 import { Course } from '../../features/courses/types';
 import { useSession } from '../../context/SessionContext';
 
@@ -17,7 +17,7 @@ export const CoursesScreen: React.FC = () => {
 
   useEffect(() => {
     seedCoursesIfEmpty();
-    setCourses(getCourses());
+    setCourses(getPublishedCourses()); // Only show published courses
   }, []);
 
   const filters = ['All', 'Mindfulness', 'Astrology', 'Self-Care'];

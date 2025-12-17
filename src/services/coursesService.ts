@@ -47,6 +47,134 @@ export const markLessonCompleted = (userId: string, courseId: string, lessonId: 
   storage.setJSON(PROGRESS_KEY, allProgress);
 };
 
+/**
+ * CRUD Operations for Courses (Mentor/Admin)
+ */
+
+export const createCourse = (data: {
+  title: string;
+  description: string;
+  mentorId: string;
+  mentorName: string;
+  category: 'Mindfulness' | 'Astrology' | 'Self-Care' | 'Spirituality';
+  imageUrl?: string;
+  isProOnly?: boolean;
+}): Course => {
+  const courses = getCourses();
+  const newCourse: Course = {
+    id: `c_${Date.now()}`,
+    ...data,
+    lessons: [],
+    createdAtIso: new Date().toISOString(),
+    status: 'draft', // draft | published | archived
+  };
+  courses.push(newCourse);
+  storage.setJSON(COURSES_KEY, courses);
+  return newCourse;
+};
+
+export const updateCourse = (courseId: string, updates: Partial<Course>): Course | null => {
+  const courses = getCourses();
+  const index = courses.findIndex(c => c.id === courseId);
+  if (index === -1) return null;
+
+  courses[index] = { ...courses[index], ...updates, updatedAtIso: new Date().toISOString() };
+  storage.setJSON(COURSES_KEY, courses);
+  return courses[index];
+};
+
+export const deleteCourse = (courseId: string): boolean => {
+  const courses = getCourses();
+  const filtered = courses.filter(c => c.id !== courseId);
+  if (filtered.length === courses.length) return false;
+  storage.setJSON(COURSES_KEY, filtered);
+  return true;
+};
+
+export const publishCourse = (courseId: string): Course | null => {
+  return updateCourse(courseId, { status: 'published' });
+};
+
+export const archiveCourse = (courseId: string): Course | null => {
+  return updateCourse(courseId, { status: 'archived' });
+};
+
+/**
+ * Lesson Management
+ */
+
+export const createLesson = (courseId: string, data: {
+  title: string;
+  content: string;
+  durationMin: number;
+}): Lesson | null => {
+  const course = getCourseById(courseId);
+  if (!course) return null;
+
+  const newLesson: Lesson = {
+    id: `l_${Date.now()}`,
+    courseId,
+    title: data.title,
+    content: data.content,
+    durationMin: data.durationMin,
+    order: course.lessons.length + 1,
+  };
+
+  course.lessons.push(newLesson);
+  updateCourse(courseId, { lessons: course.lessons });
+  return newLesson;
+};
+
+export const updateLesson = (courseId: string, lessonId: string, updates: Partial<Lesson>): Lesson | null => {
+  const course = getCourseById(courseId);
+  if (!course) return null;
+
+  const index = course.lessons.findIndex(l => l.id === lessonId);
+  if (index === -1) return null;
+
+  course.lessons[index] = { ...course.lessons[index], ...updates };
+  updateCourse(courseId, { lessons: course.lessons });
+  return course.lessons[index];
+};
+
+export const deleteLesson = (courseId: string, lessonId: string): boolean => {
+  const course = getCourseById(courseId);
+  if (!course) return false;
+
+  const filtered = course.lessons.filter(l => l.id !== lessonId);
+  if (filtered.length === course.lessons.length) return false;
+
+  // Reorder
+  filtered.forEach((l, i) => l.order = i + 1);
+  updateCourse(courseId, { lessons: filtered });
+  return true;
+};
+
+export const reorderLessons = (courseId: string, lessonIds: string[]): boolean => {
+  const course = getCourseById(courseId);
+  if (!course) return false;
+
+  const reordered = lessonIds
+    .map(id => course.lessons.find(l => l.id === id))
+    .filter(Boolean) as Lesson[];
+
+  reordered.forEach((l, i) => l.order = i + 1);
+  updateCourse(courseId, { lessons: reordered });
+  return true;
+};
+
+/**
+ * Queries
+ */
+
+export const getCoursesByMentor = (mentorId: string): Course[] => {
+  return getCourses().filter(c => c.mentorId === mentorId);
+};
+
+export const getPublishedCourses = (): Course[] => {
+  return getCourses().filter(c => c.status === 'published' || !c.status);
+};
+
 export const seedCoursesIfEmpty = () => {
   if (getCourses().length > 0) return;
 

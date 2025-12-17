@@ -8,6 +8,8 @@ export interface Lesson {
   order: number;
 }
 
+export type CourseStatus = 'draft' | 'published' | 'archived';
+
 export interface Course {
   id: string;
   title: string;
@@ -18,6 +20,9 @@ export interface Course {
   category: 'Mindfulness' | 'Astrology' | 'Self-Care' | 'Spirituality';
   lessons: Lesson[];
   isProOnly?: boolean;
+  status?: CourseStatus;
+  createdAtIso?: string;
+  updatedAtIso?: string;
 }
 
 export interface CourseProgress {
