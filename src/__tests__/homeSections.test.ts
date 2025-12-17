@@ -38,16 +38,16 @@ describe('Home Sections Registry', () => {
   it('getVisibleSections filters by user role', () => {
     const mockSections: HomeSectionDef[] = [
       { id: 'daily_insight', enabled: true, component: () => null, priority: 1 },
-      { id: 'recommended_mentors', enabled: true, component: () => null, priority: 2, roles: ['seeker'] },
+      { id: 'recommended_mentors', enabled: true, component: () => null, priority: 2, roles: ['user'] },
       { id: 'upcoming_session', enabled: true, component: () => null, priority: 3, roles: ['mentor'] },
     ];
 
-    // Seeker user
-    const seekerVisible = getVisibleSections(mockSections, 'seeker', {}, false);
-    expect(seekerVisible.length).toBe(2);
-    expect(seekerVisible.find(s => s.id === 'daily_insight')).toBeDefined();
-    expect(seekerVisible.find(s => s.id === 'recommended_mentors')).toBeDefined();
-    expect(seekerVisible.find(s => s.id === 'upcoming_session')).toBeUndefined();
+    // Regular user
+    const userVisible = getVisibleSections(mockSections, 'user', {}, false);
+    expect(userVisible.length).toBe(2);
+    expect(userVisible.find(s => s.id === 'daily_insight')).toBeDefined();
+    expect(userVisible.find(s => s.id === 'recommended_mentors')).toBeDefined();
+    expect(userVisible.find(s => s.id === 'upcoming_session')).toBeUndefined();
 
     // Mentor user
     const mentorVisible = getVisibleSections(mockSections, 'mentor', {}, false);
@@ -111,13 +111,13 @@ describe('Home Sections Registry', () => {
   it('getVisibleSections handles multiple filters together', () => {
     const mockSections: HomeSectionDef[] = [
       { id: 'daily_insight', enabled: true, component: () => null, priority: 1 },
-      { id: 'recommended_mentors', enabled: true, component: () => null, priority: 2, roles: ['seeker'], featureFlag: 'mentors' },
+      { id: 'recommended_mentors', enabled: true, component: () => null, priority: 2, roles: ['user'], featureFlag: 'mentors' },
       { id: 'upcoming_session', enabled: true, component: () => null, priority: 3, requiresPro: true },
       { id: 'community_highlights', enabled: false, component: () => null, priority: 4 },
     ];
 
     const flags = { mentors: true };
-    const visible = getVisibleSections(mockSections, 'seeker', flags, true);
+    const visible = getVisibleSections(mockSections, 'user', flags, true);
     
     // Should show: daily_insight, recommended_mentors, upcoming_session
     // Should NOT show: community_highlights (disabled)

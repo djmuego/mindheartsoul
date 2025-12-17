@@ -29,7 +29,7 @@ export const AdminDashboardScreen: React.FC = () => {
   };
 
   const handleReject = (userId: string) => {
-    updateUserRole(userId, 'seeker');
+    updateUserRole(userId, 'user');
     setRefresh(r => r + 1);
   };
 

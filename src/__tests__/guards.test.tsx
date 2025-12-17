@@ -45,15 +45,15 @@ describe('RouteGuard', () => {
   };
 
   it('renders children if checks pass', () => {
-    const seekerUser: User = { 
+    const regularUser: User = { 
       id: 'u1', 
-      name: 'Seeker', 
-      email: 'seeker@test.com', 
-      role: 'seeker',
+      name: 'User', 
+      email: 'user@test.com', 
+      role: 'user',
       createdAtIso: new Date().toISOString()
     };
     
-    mockUseSession.mockReturnValue({ user: seekerUser });
+    mockUseSession.mockReturnValue({ user: regularUser });
     mockUseFeatureFlags.mockReturnValue({ flags: {} });
     mockUseEntitlements.mockReturnValue({ isPro: false });
 
@@ -63,15 +63,15 @@ describe('RouteGuard', () => {
   });
 
   it('shows access denied if role mismatch', () => {
-    const seekerUser: User = { 
+    const regularUser: User = { 
       id: 'u1', 
-      name: 'Seeker', 
-      email: 'seeker@test.com', 
-      role: 'seeker', // Not admin
+      name: 'User', 
+      email: 'user@test.com', 
+      role: 'user', // Not admin
       createdAtIso: new Date().toISOString()
     };
     
-    mockUseSession.mockReturnValue({ user: seekerUser });
+    mockUseSession.mockReturnValue({ user: regularUser });
     mockUseFeatureFlags.mockReturnValue({ flags: {} });
     mockUseEntitlements.mockReturnValue({ isPro: false });
 
@@ -86,7 +86,7 @@ describe('RouteGuard', () => {
       id: 'u1', 
       name: 'Free User', 
       email: 'free@test.com', 
-      role: 'seeker',
+      role: 'user',
       createdAtIso: new Date().toISOString()
     };
     
@@ -104,7 +104,7 @@ describe('RouteGuard', () => {
       id: 'u1', 
       name: 'User', 
       email: 'user@test.com', 
-      role: 'seeker',
+      role: 'user',
       createdAtIso: new Date().toISOString()
     };
     
@@ -143,7 +143,7 @@ describe('RouteGuard', () => {
       id: 'p1', 
       name: 'Pro User', 
       email: 'pro@test.com', 
-      role: 'seeker',
+      role: 'user',
       createdAtIso: new Date().toISOString()
     };
     
@@ -163,7 +163,7 @@ describe('RouteGuard', () => {
       id: 'u1', 
       name: 'User', 
       email: 'user@test.com', 
-      role: 'seeker',
+      role: 'user',
       createdAtIso: new Date().toISOString()
     };
     

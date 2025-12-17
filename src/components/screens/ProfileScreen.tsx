@@ -200,7 +200,7 @@ export const ProfileScreen: React.FC = () => {
         )}
 
         {/* Existing Actions */}
-        {user?.role === 'seeker' && (
+        {user?.role === 'user' && (
            <button onClick={handleApplyMentor} className="w-full flex items-center justify-between p-4 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl shadow-md text-white mt-6">
               <div className="flex items-center space-x-4">
                  <div className="p-2 rounded-lg bg-white/20"><Briefcase size={20} /></div>

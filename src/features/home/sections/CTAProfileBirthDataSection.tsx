@@ -27,8 +27,8 @@ export const CTAProfileBirthDataSection: React.FC = () => {
     );
   }
 
-  // 2. Secondary: Mentor CTA if seeker
-  if (user?.role === 'seeker') {
+  // 2. Secondary: Mentor CTA if regular user
+  if (user?.role === 'user') {
     return (
       <section className="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-6 text-white relative overflow-hidden">
         <Briefcase className="absolute top-4 right-4 text-white/20" size={48} />

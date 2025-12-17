@@ -10,7 +10,7 @@ export enum AppTab {
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
-export type UserRole = 'seeker' | 'mentor' | 'mentor_pending' | 'admin';
+export type UserRole = 'user' | 'mentor' | 'mentor_pending' | 'admin';
 
 export interface User {
   id: string;

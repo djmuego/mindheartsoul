@@ -52,8 +52,8 @@ export const HOME_SECTIONS: HomeSectionDef[] = [
     enabled: true,
     component: RecommendedMentorsSection,
     priority: 40,
-    // Recommended mentors - only for seeker role
-    roles: ['seeker'],
+    // Recommended mentors - only for regular users
+    roles: ['user'],
   },
   {
     id: 'community_highlights',

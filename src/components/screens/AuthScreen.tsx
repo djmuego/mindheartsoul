@@ -9,7 +9,7 @@ export const AuthScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState<UserRole>('seeker');
+  const [role, setRole] = useState<UserRole>('user');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +19,7 @@ export const AuthScreen: React.FC = () => {
   };
 
   const handleGuest = () => {
-    loginMock('Guest User', 'guest@local', 'seeker');
+    loginMock('Guest User', 'guest@local', 'user');
   };
 
   return (
@@ -81,9 +81,8 @@ export const AuthScreen: React.FC = () => {
                 onChange={e => setRole(e.target.value as UserRole)}
                 className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-colors"
               >
-                <option value="seeker">Seeker</option>
+                <option value="user">User</option>
                 <option value="mentor">Mentor</option>
-                <option value="admin">Admin</option>
               </select>
             </div>
 
