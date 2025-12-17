@@ -4,7 +4,7 @@ import { Calendar, MessageCircle, Clock, User } from 'lucide-react';
 import { useSession } from '../../context/SessionContext';
 import { useT } from '../../i18n/useT';
 import { getBookingsByUser } from '../../services/bookingsService';
-import { getMentorById } from '../../mockData';
+import { getMentorById } from '../../services/mockData';
 
 export const MySessionsScreen: React.FC = () => {
   const navigate = useNavigate();
