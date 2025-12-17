@@ -29,13 +29,46 @@ const CALLBACK_URL = import.meta.env.VITE_APIRONE_CALLBACK_URL || window.locatio
 console.log('🔑 Apirone Account ID:', APIRONE_ACCOUNT);
 console.log('📞 Callback URL:', CALLBACK_URL);
 
-const CRYPTO_CURRENCIES: ApiironeCurrency[] = [
-  'btc',
-  'eth',
-  'usdt@trx',
-  'usdc@trx',
-  'usdt@eth',
-  'bnb',
+// Simplified currency list with network selection
+interface CryptoOption {
+  id: string;
+  name: string;
+  symbol: string;
+  currencies: ApiironeCurrency[];
+  icon?: string;
+}
+
+const CRYPTO_OPTIONS: CryptoOption[] = [
+  {
+    id: 'btc',
+    name: 'Bitcoin',
+    symbol: 'BTC',
+    currencies: ['btc'],
+  },
+  {
+    id: 'eth',
+    name: 'Ethereum',
+    symbol: 'ETH',
+    currencies: ['eth'],
+  },
+  {
+    id: 'usdt',
+    name: 'USDT',
+    symbol: 'USDT',
+    currencies: ['usdt@trx', 'usdt@eth', 'usdt@bnb'], // TRC-20, ERC-20, BEP-20
+  },
+  {
+    id: 'usdc',
+    name: 'USDC',
+    symbol: 'USDC',
+    currencies: ['usdc@trx', 'usdc@eth', 'usdc@bnb'], // TRC-20, ERC-20, BEP-20
+  },
+  {
+    id: 'bnb',
+    name: 'BNB',
+    symbol: 'BNB',
+    currencies: ['bnb'],
+  },
 ];
 
 interface PaymentScreenProps {
@@ -53,7 +86,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const { user } = useSession();
   const [searchParams] = useSearchParams();
 
-  const [selectedCurrency, setSelectedCurrency] = useState<ApiironeCurrency>('usdt@trx');
+  const [selectedOption, setSelectedOption] = useState<CryptoOption>(CRYPTO_OPTIONS[2]); // USDT by default
+  const [selectedNetwork, setSelectedNetwork] = useState<ApiironeCurrency>('usdt@trx'); // TRC-20 by default
   const [payment, setPayment] = useState<PaymentRecord | null>(null);
   const [paymentAddress, setPaymentAddress] = useState<string>('');
   const [cryptoAmount, setCryptoAmount] = useState<number>(0);
@@ -75,12 +109,12 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   }, [user, navigate]);
 
   useEffect(() => {
-    if (selectedCurrency && usdAmount) {
-      convertUsdToCrypto(usdAmount, selectedCurrency)
+    if (selectedNetwork && usdAmount) {
+      convertUsdToCrypto(usdAmount, selectedNetwork)
         .then(amount => setCryptoAmount(amount))
         .catch(err => setError(`Failed to convert amount: ${err.message}`));
     }
-  }, [selectedCurrency, usdAmount]);
+  }, [selectedNetwork, usdAmount]);
 
   const handleCreatePayment = async () => {
     if (!user) return;
@@ -91,7 +125,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
     try {
       console.log('💰 Creating payment with:', {
         account: APIRONE_ACCOUNT,
-        currency: selectedCurrency,
+        currency: selectedNetwork,
         usdAmount,
         cryptoAmount
       });
@@ -102,10 +136,10 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
         purpose: actualPurpose,
         relatedId: actualRelatedId,
         amount: usdAmount,
-        currency: getCurrencySymbol(selectedCurrency) as any,
+        currency: getCurrencySymbol(selectedNetwork) as any,
         provider: 'apirone',
         metadata: {
-          cryptoCurrency: selectedCurrency,
+          cryptoCurrency: selectedNetwork,
           cryptoAmount,
         }
       });
@@ -116,7 +150,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
       console.log('🔗 Generating Apirone address...');
       const addressData = await generatePaymentAddress({
         account: APIRONE_ACCOUNT,
-        currency: selectedCurrency,
+        currency: selectedNetwork,
         callbackUrl: CALLBACK_URL,
         callbackData: {
           paymentId: newPayment.id,
@@ -154,7 +188,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
     const checkInterval = setInterval(async () => {
       try {
         console.log('⏰ Checking balance...');
-        const balance = await checkAddressBalance(APIRONE_ACCOUNT, address, selectedCurrency);
+        const balance = await checkAddressBalance(APIRONE_ACCOUNT, address, selectedNetwork);
         console.log('💵 Balance:', balance, 'Expected:', cryptoAmount);
         
         if (balance.total >= cryptoAmount) {
@@ -245,28 +279,53 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Select Cryptocurrency</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {CRYPTO_CURRENCIES.map(currency => (
+              
+              {/* Currency Selection */}
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {CRYPTO_OPTIONS.map(option => (
                   <button
-                    key={currency}
-                    onClick={() => setSelectedCurrency(currency)}
+                    key={option.id}
+                    onClick={() => {
+                      setSelectedOption(option);
+                      setSelectedNetwork(option.currencies[0]); // Auto-select first network
+                    }}
                     className={`p-4 rounded-xl border-2 transition-all ${
-                      selectedCurrency === currency
+                      selectedOption.id === option.id
                         ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20'
                         : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                     }`}
                   >
-                    <div className="font-bold text-slate-900 dark:text-white">{getCurrencySymbol(currency)}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{getCurrencyName(currency)}</div>
+                    <div className="font-bold text-slate-900 dark:text-white text-lg">{option.symbol}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">{option.name}</div>
                   </button>
                 ))}
               </div>
 
+              {/* Network Selection (if multiple networks available) */}
+              {selectedOption.currencies.length > 1 && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Select Network:
+                  </label>
+                  <select
+                    value={selectedNetwork}
+                    onChange={(e) => setSelectedNetwork(e.target.value as ApiironeCurrency)}
+                    className="w-full p-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
+                  >
+                    {selectedOption.currencies.map(curr => (
+                      <option key={curr} value={curr}>
+                        {getCurrencyName(curr)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               {cryptoAmount > 0 && (
-                <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <div className="text-sm text-slate-600 dark:text-slate-400">You will pay:</div>
                   <div className="text-lg font-bold text-slate-900 dark:text-white">
-                    {formatCryptoAmount(cryptoAmount, selectedCurrency)} {getCurrencySymbol(selectedCurrency)}
+                    {formatCryptoAmount(cryptoAmount, selectedNetwork)} {getCurrencySymbol(selectedNetwork)}
                   </div>
                 </div>
               )}
@@ -318,7 +377,10 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
               <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                 <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <strong>Amount to send:</strong> {formatCryptoAmount(cryptoAmount, selectedCurrency)} {getCurrencySymbol(selectedCurrency)}
+                  <strong>Amount to send:</strong> {formatCryptoAmount(cryptoAmount, selectedNetwork)} {getCurrencySymbol(selectedNetwork)}
+                </div>
+                <div className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+                  Network: {getCurrencyName(selectedNetwork)}
                 </div>
               </div>
             </div>

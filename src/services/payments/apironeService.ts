@@ -14,17 +14,11 @@
 
 const APIRONE_BASE_URL = 'https://apirone.com/api/v2';
 
-// CORS proxy for development (browser requests)
+// Mock mode for development (CORS issues in browser)
 // In production, requests should go through your backend
-const USE_CORS_PROXY = import.meta.env.DEV; // Only in dev mode
-const CORS_PROXY = 'https://corsproxy.io/?';
+const USE_MOCK = import.meta.env.DEV && !import.meta.env.VITE_APIRONE_REAL_MODE;
 
-function getApiUrl(path: string): string {
-  const url = `${APIRONE_BASE_URL}${path}`;
-  // In dev mode, use CORS proxy to bypass browser CORS restrictions
-  // In production, backend should handle Apirone requests
-  return USE_CORS_PROXY ? `${CORS_PROXY}${encodeURIComponent(url)}` : url;
-}
+console.log('🔧 Apirone Mode:', USE_MOCK ? 'MOCK (dev)' : 'REAL API');
 
 export type ApiironeCurrency = 
   | 'btc' 
@@ -85,7 +79,7 @@ export async function createApironeAccount(profile?: {
   email?: string;
   country?: string;
 }): Promise<ApironeAccount> {
-  const response = await fetch(getApiUrl('/accounts'), {
+  const response = await fetch(`${APIRONE_BASE_URL}/accounts`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -119,7 +113,42 @@ export async function generatePaymentAddress(
 ): Promise<ApironeAddress> {
   const { account, currency, callbackUrl, callbackData } = options;
 
-  const response = await fetch(getApiUrl(`/accounts/${account}/addresses`), {
+  // Mock mode for development (CORS bypass)
+  if (USE_MOCK) {
+    console.log('🎭 MOCK: Generating address for', currency);
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate delay
+    
+    const mockAddresses: Record<ApiironeCurrency, string> = {
+      'btc': '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+      'eth': '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
+      'usdt@eth': '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
+      'usdc@eth': '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
+      'trx': 'TZ23wChjN72mdxet916V8hoicPWH46hmT8',
+      'usdt@trx': 'TZ23wChjN72mdxet916V8hoicPWH46hmT8',
+      'usdc@trx': 'TZ23wChjN72mdxet916V8hoicPWH46hmT8',
+      'bnb': 'bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2',
+      'usdt@bnb': 'bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2',
+      'usdc@bnb': 'bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2',
+      'ltc': 'LTC1234567890abcdefghijklmnopqrs',
+      'bch': 'bitcoincash:qph5kuz78czq00e3t85ugpgd7xmer5kr7c5f6jdpwk',
+      'doge': 'DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L',
+    };
+
+    return {
+      account,
+      currency,
+      address: mockAddresses[currency] || 'mock_address_' + Math.random().toString(36).substr(2, 9),
+      created: new Date().toISOString(),
+      type: 'generic',
+      callback: {
+        url: callbackUrl,
+        data: callbackData
+      }
+    };
+  }
+
+  // Real API call
+  const response = await fetch(`${APIRONE_BASE_URL}/accounts/${account}/addresses`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -147,9 +176,16 @@ export async function checkAddressBalance(
   address: string,
   currency: ApiironeCurrency
 ): Promise<{ available: number; total: number }> {
+  // Mock mode - always return 0 (no payment received in mock)
+  if (USE_MOCK) {
+    console.log('🎭 MOCK: Checking balance for', address);
+    return { available: 0, total: 0 };
+  }
+
+  // Real API call
   const params = new URLSearchParams({ currency });
   const response = await fetch(
-    getApiUrl(`/accounts/${account}/addresses/${address}/balance?${params}`)
+    `${APIRONE_BASE_URL}/accounts/${account}/addresses/${address}/balance?${params}`
   );
 
   if (!response.ok) {
@@ -174,7 +210,7 @@ export async function getAddressInfo(
 ): Promise<any> {
   const params = currency ? `?currency=${currency}` : '';
   const response = await fetch(
-    getApiUrl(`/accounts/${account}/addresses/${address}${params}`)
+    `${APIRONE_BASE_URL}/accounts/${account}/addresses/${address}${params}`
   );
 
   if (!response.ok) {
@@ -189,7 +225,29 @@ export async function getAddressInfo(
  * Gets current exchange rate
  */
 export async function getExchangeRate(currency: ApiironeCurrency): Promise<number> {
-  const response = await fetch(getApiUrl(`/ticker?currency=${currency}`));
+  // Mock mode
+  if (USE_MOCK) {
+    const mockRates: Record<ApiironeCurrency, number> = {
+      'btc': 45000,
+      'eth': 2500,
+      'usdt@eth': 1.0,
+      'usdc@eth': 1.0,
+      'trx': 0.10,
+      'usdt@trx': 1.0,
+      'usdc@trx': 1.0,
+      'bnb': 300,
+      'usdt@bnb': 1.0,
+      'usdc@bnb': 1.0,
+      'ltc': 75,
+      'bch': 250,
+      'doge': 0.08,
+    };
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return mockRates[currency] || 1.0;
+  }
+
+  // Real API call
+  const response = await fetch(`${APIRONE_BASE_URL}/ticker?currency=${currency}`);
   
   if (!response.ok) {
     const errorText = await response.text();
@@ -197,7 +255,7 @@ export async function getExchangeRate(currency: ApiironeCurrency): Promise<numbe
   }
 
   const data = await response.json();
-  return parseFloat(data.usd); // Rate in USD
+  return parseFloat(data.usd);
 }
 
 /**
