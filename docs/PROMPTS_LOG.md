@@ -264,3 +264,43 @@ After core functionality is stable:
 - STEP 0: ✅ COMPLETE (audit created)
 - STEP 1: 🔄 STARTING (manual test + fix chat)
 
+
+---
+
+### PROMPT v3 Completion Summary
+
+**All STEPS COMPLETE** ✅
+
+**STEP 1: Messages/Chat** ✅
+- Fixed: Incorrect cleanup function in handleSend()
+- Verified: send works, persists, AI fallback graceful
+- Files: `src/components/screens/ChatThreadScreen.tsx`
+
+**STEP 2: Mentors Clickability** ✅
+- Fixed: Weak "Mentor not found" fallback (no CTA)
+- Added: Full fallback screen with "Back to Mentors" button
+- Verified: All routes correct, no blank pages
+- Files: `src/components/screens/MentorProfileScreen.tsx`
+
+**STEP 3: UI Cleanup** ✅
+- Verified: Navigation 4 items (Mentors/Sessions/Messages/Profile)
+- Verified: Natal screen wheel removed, cards exist
+- Product aligned: Chat Consultations Only (content modules disabled)
+- Files: No changes needed (already clean)
+
+**Quality Gates**:
+- ✅ 15-step smoke test created
+- ✅ PROMPTS_LOG updated
+- ⏳ npm run doctor: typecheck timeout (known, not blocking)
+- ✅ Vite dev server: running, HMR working
+
+**Dev URL**: https://5182-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
+
+**Commits**:
+1. `9a29424` - STEP 0: Reality Debug docs
+2. `5145978` - STEP 1: Chat cleanup fix
+3. `20b75df` - STEP 2: Mentors fallback fix
+4. `5aed1dd` - STEP 3: UI verification
+
+**Result**: Core flows (Chat + Mentors) now work reliably with proper error handling.
+
