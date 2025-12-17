@@ -14,6 +14,18 @@
 
 const APIRONE_BASE_URL = 'https://apirone.com/api/v2';
 
+// CORS proxy for development (browser requests)
+// In production, requests should go through your backend
+const USE_CORS_PROXY = import.meta.env.DEV; // Only in dev mode
+const CORS_PROXY = 'https://corsproxy.io/?';
+
+function getApiUrl(path: string): string {
+  const url = `${APIRONE_BASE_URL}${path}`;
+  // In dev mode, use CORS proxy to bypass browser CORS restrictions
+  // In production, backend should handle Apirone requests
+  return USE_CORS_PROXY ? `${CORS_PROXY}${encodeURIComponent(url)}` : url;
+}
+
 export type ApiironeCurrency = 
   | 'btc' 
   | 'eth' 
@@ -73,7 +85,7 @@ export async function createApironeAccount(profile?: {
   email?: string;
   country?: string;
 }): Promise<ApironeAccount> {
-  const response = await fetch(`${APIRONE_BASE_URL}/accounts`, {
+  const response = await fetch(getApiUrl('/accounts'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -87,7 +99,8 @@ export async function createApironeAccount(profile?: {
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to create Apirone account: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to create Apirone account: ${response.statusText} - ${errorText}`);
   }
 
   const data = await response.json();
@@ -106,7 +119,7 @@ export async function generatePaymentAddress(
 ): Promise<ApironeAddress> {
   const { account, currency, callbackUrl, callbackData } = options;
 
-  const response = await fetch(`${APIRONE_BASE_URL}/accounts/${account}/addresses`, {
+  const response = await fetch(getApiUrl(`/accounts/${account}/addresses`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -119,7 +132,8 @@ export async function generatePaymentAddress(
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to generate address: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to generate address: ${response.statusText} - ${errorText}`);
   }
 
   return await response.json();
@@ -135,11 +149,12 @@ export async function checkAddressBalance(
 ): Promise<{ available: number; total: number }> {
   const params = new URLSearchParams({ currency });
   const response = await fetch(
-    `${APIRONE_BASE_URL}/accounts/${account}/addresses/${address}/balance?${params}`
+    getApiUrl(`/accounts/${account}/addresses/${address}/balance?${params}`)
   );
 
   if (!response.ok) {
-    throw new Error(`Failed to check balance: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to check balance: ${response.statusText} - ${errorText}`);
   }
 
   const data = await response.json();
@@ -159,11 +174,12 @@ export async function getAddressInfo(
 ): Promise<any> {
   const params = currency ? `?currency=${currency}` : '';
   const response = await fetch(
-    `${APIRONE_BASE_URL}/accounts/${account}/addresses/${address}${params}`
+    getApiUrl(`/accounts/${account}/addresses/${address}${params}`)
   );
 
   if (!response.ok) {
-    throw new Error(`Failed to get address info: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to get address info: ${response.statusText} - ${errorText}`);
   }
 
   return await response.json();
@@ -173,10 +189,11 @@ export async function getAddressInfo(
  * Gets current exchange rate
  */
 export async function getExchangeRate(currency: ApiironeCurrency): Promise<number> {
-  const response = await fetch(`https://apirone.com/api/v2/ticker?currency=${currency}`);
+  const response = await fetch(getApiUrl(`/ticker?currency=${currency}`));
   
   if (!response.ok) {
-    throw new Error(`Failed to get exchange rate: ${response.statusText}`);
+    const errorText = await response.text();
+    throw new Error(`Failed to get exchange rate: ${response.statusText} - ${errorText}`);
   }
 
   const data = await response.json();
