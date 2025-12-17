@@ -232,9 +232,9 @@ export default {
   'error.copyDetails': 'Copy Error Details',
   'error.copied': 'Copied!',
   'error.helpText': 'If the problem persists, please contact support.',
-};
 
   'booking.openChat': 'Open Chat',
+  
   'disabled.title': 'Feature Disabled',
   'disabled.heading': 'This feature is currently unavailable',
   'disabled.message': 'This section is disabled in consultation mode. Connect with your mentor via chat consultations.',
