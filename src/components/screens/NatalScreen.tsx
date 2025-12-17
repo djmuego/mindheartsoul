@@ -3,9 +3,9 @@ import { Brand } from '../../constants';
 import { useSession } from '../../context/SessionContext';
 import { useT } from '../../i18n/useT';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, ArrowRight, Star, Activity } from 'lucide-react';
+import { Sparkles, ArrowRight, Star, Activity, Calculator, Heart } from 'lucide-react';
 import { computeMockPlanetDegrees, PLANETS } from '../../services/natalChartMock';
-import { NatalChart } from '../NatalChart';
+// import { NatalChart } from '../NatalChart'; // Removed: per requirements
 
 export const NatalScreen: React.FC = () => {
   const { birthProfile } = useSession();
@@ -48,23 +48,38 @@ export const NatalScreen: React.FC = () => {
         </p>
       </div>
 
-      <div className="mt-6 mb-2">
-        {planetDegrees && <NatalChart degrees={planetDegrees} />}
-      </div>
+      {/* Removed: NatalChart wheel component per requirements */}
 
       <div className="px-6 mt-6">
         <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">{t('natal.modules')}</h3>
         <div className="grid grid-cols-2 gap-3">
            <button 
              onClick={() => navigate('/astrology')}
-             className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800 flex flex-col items-center justify-center space-y-2"
+             className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition-shadow"
            >
              <Star className="text-purple-600 dark:text-purple-400" size={24} />
              <span className="font-semibold text-sm text-slate-800 dark:text-slate-200">{t('natal.astrology')}</span>
            </button>
+           
+           <button 
+             onClick={() => navigate('/numerology')}
+             className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-800 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition-shadow"
+           >
+             <Calculator className="text-blue-600 dark:text-blue-400" size={24} />
+             <span className="font-semibold text-sm text-slate-800 dark:text-slate-200">{t('natal.numerology')}</span>
+           </button>
+           
+           <button 
+             onClick={() => navigate('/meditation')}
+             className="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition-shadow"
+           >
+             <Heart className="text-green-600 dark:text-green-400" size={24} />
+             <span className="font-semibold text-sm text-slate-800 dark:text-slate-200">{t('natal.meditation')}</span>
+           </button>
+           
            <button 
              onClick={() => navigate('/human-design')}
-             className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-100 dark:border-orange-800 flex flex-col items-center justify-center space-y-2"
+             className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-100 dark:border-orange-800 flex flex-col items-center justify-center space-y-2 hover:shadow-md transition-shadow"
            >
              <Activity className="text-orange-600 dark:text-orange-400" size={24} />
              <span className="font-semibold text-sm text-slate-800 dark:text-slate-200">{t('natal.humanDesign')}</span>

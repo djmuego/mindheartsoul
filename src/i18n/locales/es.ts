@@ -182,8 +182,18 @@ export default {
 
   'ai.limitReached': 'Límite diario alcanzado',
   'ai.upgradeToChat': 'Actualiza a Pro para chat ilimitado.',
+  'ai.unavailable': 'Asistente de IA temporalmente no disponible',
+  'ai.unavailableDesc': 'Por favor, inténtalo más tarde o contacta con soporte.',
+  'ai.proOnly': 'Información de IA disponible para miembros Pro',
+  'ai.proOnlyDesc': '¡Actualiza para continuar nuestra conversación!',
 
-  'astrology.desc': 'Análisis profundo de tránsitos planetarios. Próximamente.',
+  'astrology.desc': 'Análisis profundo de tránsitos planetarios.',
+  'numerology.title': 'Numerología',
+  'numerology.desc': 'Descubre el significado de los números en tu vida.',
+  'numerology.comingSoon': 'Perspectivas de numerología próximamente. ¡Mantente atento!',
+  'meditation.title': 'Meditación',
+  'meditation.desc': 'Meditaciones guiadas para mente, corazón y alma.',
+  'meditation.comingSoon': 'Biblioteca de meditación próximamente.',
 
   'booking.cancel': 'Cancelar reserva',
   'booking.cancelled': 'Cancelada',
@@ -210,9 +220,11 @@ export default {
   'community.reportSpam': 'Spam',
   'community.reported': 'Reporte enviado.',
 
-  'hd.desc': 'Descubre tu tipo de energía y estrategia. Próximamente.',
+  'hd.desc': 'Descubre tu tipo de energía y estrategia.',
 
   'natal.astrology': 'Astrología',
+  'natal.numerology': 'Numerología',
+  'natal.meditation': 'Meditación',
   'natal.humanDesign': 'Diseño Humano',
   'natal.modules': 'Cartas avanzadas',
 

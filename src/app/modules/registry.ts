@@ -15,6 +15,8 @@ import { mentorDashboardModule } from './mentorDashboardModule';
 import { astrologyModule } from './astrologyModule';
 import { humanDesignModule } from './humanDesignModule';
 import { paymentsModule } from './paymentsModule';
+import { numerologyModule } from './numerologyModule';
+import { meditationModule } from './meditationModule';
 
 export const ALL_MODULES: AppModule[] = [
   homeModule,
@@ -30,6 +32,8 @@ export const ALL_MODULES: AppModule[] = [
   adminModule,
   mentorDashboardModule,
   astrologyModule,
+  numerologyModule,
+  meditationModule,
   humanDesignModule,
   paymentsModule
 ];

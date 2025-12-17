@@ -182,8 +182,18 @@ export default {
 
   'ai.limitReached': 'Tageslimit erreicht',
   'ai.upgradeToChat': 'Upgrade auf Pro für unbegrenzten Chat.',
+  'ai.unavailable': 'KI-Assistent ist vorübergehend nicht verfügbar',
+  'ai.unavailableDesc': 'Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support.',
+  'ai.proOnly': 'KI-Einblicke verfügbar für Pro-Mitglieder',
+  'ai.proOnlyDesc': 'Upgraden Sie, um unser Gespräch fortzusetzen!',
 
-  'astrology.desc': 'Tiefere Einblicke in planetare Transite. Bald verfügbar.',
+  'astrology.desc': 'Tiefere Einblicke in planetare Transite.',
+  'numerology.title': 'Numerologie',
+  'numerology.desc': 'Entdecken Sie die Bedeutung von Zahlen in Ihrem Leben.',
+  'numerology.comingSoon': 'Numerologie-Einblicke kommen bald. Bleiben Sie dran!',
+  'meditation.title': 'Meditation',
+  'meditation.desc': 'Geführte Meditationen für Geist, Herz und Seele.',
+  'meditation.comingSoon': 'Meditations-Bibliothek kommt bald.',
 
   'booking.cancel': 'Buchung stornieren',
   'booking.cancelled': 'Storniert',
@@ -210,9 +220,11 @@ export default {
   'community.reportSpam': 'Spam',
   'community.reported': 'Meldung eingereicht.',
 
-  'hd.desc': 'Entdecke deinen Energietyp und deine Strategie. Bald verfügbar.',
+  'hd.desc': 'Entdecke deinen Energietyp und deine Strategie.',
 
   'natal.astrology': 'Astrologie',
+  'natal.numerology': 'Numerologie',
+  'natal.meditation': 'Meditation',
   'natal.humanDesign': 'Human Design',
   'natal.modules': 'Erweiterte Diagramme',
 

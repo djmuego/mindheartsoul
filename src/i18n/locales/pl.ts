@@ -182,8 +182,18 @@ export default {
 
   'ai.limitReached': 'Osiągnięto dzienny limit',
   'ai.upgradeToChat': 'Przejdź na Pro dla nieograniczonego czatu.',
+  'ai.unavailable': 'Asystent AI tymczasowo niedostępny',
+  'ai.unavailableDesc': 'Spróbuj ponownie później lub skontaktuj się z pomocą.',
+  'ai.proOnly': 'Wgląd AI dostępny dla członków Pro',
+  'ai.proOnlyDesc': 'Uaktualnij, aby kontynuować naszą rozmowę!',
 
-  'astrology.desc': 'Głęboka analiza tranzytów planetarnych. Wkrótce.',
+  'astrology.desc': 'Głęboka analiza tranzytów planetarnych.',
+  'numerology.title': 'Numerologia',
+  'numerology.desc': 'Odkryj znaczenie liczb w twoim życiu.',
+  'numerology.comingSoon': 'Spostrzeżenia numerologiczne wkrótce. Bądź na bieżąco!',
+  'meditation.title': 'Medytacja',
+  'meditation.desc': 'Prowadzone medytacje dla umysłu, serca i duszy.',
+  'meditation.comingSoon': 'Biblioteka medytacji wkrótce.',
 
   'booking.cancel': 'Anuluj rezerwację',
   'booking.cancelled': 'Anulowano',
@@ -213,6 +223,8 @@ export default {
   'hd.desc': 'Odkryj swój typ energii i strategię. Wkrótce.',
 
   'natal.astrology': 'Astrologia',
+  'natal.numerology': 'Numerologia',
+  'natal.meditation': 'Medytacja',
   'natal.humanDesign': 'Human Design',
   'natal.modules': 'Zaawansowane wykresy',
 

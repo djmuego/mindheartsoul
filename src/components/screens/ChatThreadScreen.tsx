@@ -52,7 +52,7 @@ export const ChatThreadScreen: React.FC = () => {
     const text = inputText;
     setInputText('');
     
-    // 1. Send User Message
+    // 1. Send User Message (ALWAYS works, regardless of API key or Pro status)
     try {
       sendMessage({
         conversationId: id,
@@ -63,53 +63,70 @@ export const ChatThreadScreen: React.FC = () => {
       });
       refreshChat();
     } catch (e: any) {
-      if (e.message === 'LIMIT_REACHED') setIsLimitReached(true);
+      console.error('Failed to send message:', e);
+      // Basic error handling: show alert or set error state
+      alert('Failed to send message. Please try again.');
       return;
     }
     
-    // 2. Pro Check & AI Response
-    const sub = getSubscription(user.id);
-    const isPro = sub && isSubscriptionActive(sub);
+    // 2. Check if AI/Assistant conversation
+    const isAIConversation = conversation?.participantIds.some(pid => 
+      pid === 'support_bot' || pid.startsWith('ai_') || pid.startsWith('sys_')
+    );
 
-    if (!isPro) {
-        // Non-Pro: Allow the message to be sent, but block further interaction or show upsell
-        // The prompt says "User can send -> immediately visible" (Done above)
-        // "Pro gating: non-Pro -> paywall"
-        setIsLimitReached(true);
-        return;
-    }
-
-    // 3. Mock AI/Mentor Response (Pro only)
-    if (conversation) {
+    // 3. AI Response Logic (only for AI conversations)
+    if (isAIConversation && conversation) {
         const otherId = conversation.participantIds.find(pid => pid !== user.id);
         const otherIndex = conversation.participantIds.indexOf(otherId || '');
         const otherName = otherIndex >= 0 ? conversation.participantNames[otherIndex] : 'Assistant';
         const otherAvatar = otherIndex >= 0 ? conversation.participantAvatars?.[otherIndex] : undefined;
 
+        // Check API key availability
+        const hasAPIKey = Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+        
+        // Check Pro status
+        const sub = getSubscription(user.id);
+        const isPro = sub && isSubscriptionActive(sub);
+
         if (otherId) {
             setTimeout(() => {
-                const responses = [
-                    "That is an interesting perspective. Could you elaborate?",
-                    "Based on your natal chart, this is a good time for reflection.",
-                    "I hear you. How does this align with your goals?",
-                    "Focus on your inner authority today.",
-                    "Let's explore that further. What specific challenges are you facing?",
-                    "This resonates with your Human Design profile.",
-                    "I am here to support you on this journey."
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                let response: string;
+
+                if (!hasAPIKey) {
+                    // No API key: friendly unavailable message
+                    response = "AI assistant is temporarily unavailable. Please try again later or contact support.";
+                } else if (!isPro) {
+                    // Has API key but not Pro: upsell message
+                    response = "AI insights are available for Pro members. Upgrade to continue our conversation!";
+                    setIsLimitReached(true);
+                } else {
+                    // Pro user with API key: normal response
+                    const responses = [
+                        "That is an interesting perspective. Could you elaborate?",
+                        "Based on your natal chart, this is a good time for reflection.",
+                        "I hear you. How does this align with your goals?",
+                        "Focus on your inner authority today.",
+                        "Let's explore that further. What specific challenges are you facing?",
+                        "This resonates with your Human Design profile.",
+                        "I am here to support you on this journey."
+                    ];
+                    response = responses[Math.floor(Math.random() * responses.length)];
+                }
 
                 sendMessage({
                     conversationId: id,
                     senderId: otherId,
                     senderName: otherName,
                     senderAvatar: otherAvatar,
-                    text: randomResponse
+                    text: response
                 });
                 refreshChat();
             }, 1500 + Math.random() * 1000); // 1.5 - 2.5s delay
         }
     }
+    
+    // 4. For non-AI conversations (mentor, user-to-user), no auto-response needed
+    // Messages just work, no gating
   };
 
   if (!conversation) return <div className="p-8 text-center">Loading...</div>;
