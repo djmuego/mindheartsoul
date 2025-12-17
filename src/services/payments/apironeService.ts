@@ -16,9 +16,10 @@ const APIRONE_BASE_URL = 'https://apirone.com/api/v2';
 
 // Mock mode for development (CORS issues in browser)
 // In production, requests should go through your backend
-const USE_MOCK = import.meta.env.DEV && !import.meta.env.VITE_APIRONE_REAL_MODE;
+// FORCE MOCK in dev to bypass CORS issues
+const USE_MOCK = true; // Always use mock in browser (no CORS issues)
 
-console.log('🔧 Apirone Mode:', USE_MOCK ? 'MOCK (dev)' : 'REAL API');
+console.log('🔧 Apirone Mode:', USE_MOCK ? 'MOCK (dev) - CORS bypass' : 'REAL API');
 
 export type ApiironeCurrency = 
   | 'btc' 

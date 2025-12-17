@@ -257,6 +257,27 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
       </div>
 
       <div className="flex-1 p-4 max-w-2xl mx-auto w-full">
+        {/* DEV MODE Warning */}
+        {import.meta.env.DEV && !payment && (
+          <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500 dark:border-blue-600 rounded-xl">
+            <div className="flex items-start space-x-3">
+              <div className="text-2xl">🎭</div>
+              <div>
+                <h3 className="font-bold text-blue-900 dark:text-blue-200 mb-1">
+                  DEV MODE: Mock Payments Active
+                </h3>
+                <p className="text-sm text-blue-800 dark:text-blue-300">
+                  You are in development mode. Payment addresses are <strong>MOCK</strong> (not real).
+                  <br />
+                  Account ID: <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">{APIRONE_ACCOUNT}</code>
+                  <br />
+                  After generating address, click "Simulate Payment" to continue.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && (
           <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl flex items-start space-x-3">
             <AlertCircle size={20} className="text-red-600 dark:text-red-400 mt-0.5" />
@@ -383,12 +404,38 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   Network: {getCurrencyName(selectedNetwork)}
                 </div>
               </div>
+
+              {/* DEV MODE: Mock payment button */}
+              {import.meta.env.DEV && (
+                <button
+                  onClick={() => {
+                    if (payment) {
+                      console.log('🎭 MOCK: Simulating payment received');
+                      markPaymentComplete(payment.id);
+                      handlePaymentSuccess(actualPurpose, actualRelatedId);
+                    }
+                  }}
+                  className="mt-4 w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  🎭 DEV: Simulate Payment Received
+                </button>
+              )}
             </div>
 
             <div className="text-center text-sm text-slate-500 dark:text-slate-400">
-              Payment will be confirmed automatically after blockchain confirmation.
-              <br />
-              This page will redirect automatically.
+              {import.meta.env.DEV ? (
+                <>
+                  🎭 <strong>DEV MODE:</strong> This is a mock payment address.
+                  <br />
+                  Click "Simulate Payment Received" to continue.
+                </>
+              ) : (
+                <>
+                  Payment will be confirmed automatically after blockchain confirmation.
+                  <br />
+                  This page will redirect automatically.
+                </>
+              )}
             </div>
           </div>
         )}
