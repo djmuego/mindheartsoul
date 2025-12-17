@@ -5,6 +5,8 @@ import { RecommendedMentorsSection } from './RecommendedMentorsSection';
 import { FeaturedContentSection } from './FeaturedContentSection';
 import { CommunityHighlightsSection } from './CommunityHighlightsSection';
 import { CTAProfileBirthDataSection } from './CTAProfileBirthDataSection';
+import { ContinueLearningSection } from './ContinueLearningSection';
+import { NotificationsPreviewSection } from './NotificationsPreviewSection';
 
 /**
  * Home Sections Registry
@@ -27,11 +29,25 @@ export const HOME_SECTIONS: HomeSectionDef[] = [
     // CTA for profile setup - show to all users
   },
   {
+    id: 'continue_learning',
+    enabled: true,
+    component: ContinueLearningSection,
+    priority: 15,
+    // Continue learning - show last active course
+  },
+  {
     id: 'upcoming_session',
     enabled: true,
     component: UpcomingSessionSection,
     priority: 20,
     // Show upcoming sessions - for all authenticated users
+  },
+  {
+    id: 'notifications_preview',
+    enabled: true,
+    component: NotificationsPreviewSection,
+    priority: 25,
+    // Latest notifications preview - for all users
   },
   {
     id: 'daily_insight',

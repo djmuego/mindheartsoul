@@ -7,7 +7,9 @@ export type HomeSectionId =
   | 'recommended_mentors'
   | 'featured_content'
   | 'community_highlights'
-  | 'cta_profile_birth_data';
+  | 'cta_profile_birth_data'
+  | 'continue_learning'
+  | 'notifications_preview';
 
 export interface HomeSectionDef {
   id: HomeSectionId;

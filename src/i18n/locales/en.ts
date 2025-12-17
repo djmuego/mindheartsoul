@@ -32,6 +32,13 @@ export default {
   'home.mentorDashTitle': 'Mentor Dashboard',
   'home.mentorDashBody': 'Manage your sessions and availability.',
   'home.mentorDashBtn': 'Go to Dashboard',
+  'home.continueLearning': 'Continue Learning',
+  'home.noCourses': 'You haven\'t started any courses yet.',
+  'home.browseCourses': 'Browse Courses',
+  'home.lessonsCompleted': 'lessons',
+  'home.continueCourse': 'Continue',
+  'home.noNotifications': 'No notifications yet.',
+  'home.viewAll': 'View All',
 
   'mentors.title': 'Find Mentors',
   'mentors.search': 'Search by topic or name...',
