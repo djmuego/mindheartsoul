@@ -233,3 +233,11 @@ export default {
   'error.copied': 'Copied!',
   'error.helpText': 'If the problem persists, please contact support.',
 };
+
+  'booking.openChat': 'Open Chat',
+  'disabled.title': 'Feature Disabled',
+  'disabled.heading': 'This feature is currently unavailable',
+  'disabled.message': 'This section is disabled in consultation mode. Connect with your mentor via chat consultations.',
+  'disabled.findMentor': 'Find a Mentor',
+  'disabled.openChat': 'Open Chat',
+};
