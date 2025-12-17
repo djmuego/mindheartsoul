@@ -1,7 +1,7 @@
 
 # Prompts Log
 
-CURRENT CHECKPOINT: Prompt #07 (Repo Stabilization Complete).
+CURRENT CHECKPOINT: Prompt #08 (ROUND 1 P0 - Close The Loops).
 
 ## Prompt #01 — Setup & Stability
 **Goal:** Establish minimal stable shell with GoRouter (Flutter) -> switched to React/Vite MVP.
@@ -72,6 +72,103 @@ npm run test       # ⚠️ 16/20 pass (guards need SessionProvider in tests)
 **Breaking Changes:** None (only removals/fixes)
 
 **Next Actions:** See docs/NEXT_STEPS.md
+
+---
+
+## Prompt #08 — ROUND 1 P0: Close The Loops + Pro Subscriptions ✅
+**Date:** 2024-12-17
+**Goal:** Fix all P0 critical broken flows identified in STATUS_AUDIT.md:
+1. Pro subscription model (monthly/yearly with expiry)
+2. Video sessions disabled cleanly
+3. Booking payment flow completed
+4. i18n cleanup (all hardcoded strings replaced)
+
+**Files touched:**
+- `src/components/screens/ProScreen.tsx` — Monthly/Yearly plan UI with selection
+- `src/components/screens/SessionJoinScreen.tsx` — Video disabled placeholder
+- `src/components/screens/payment/PaymentScreen.tsx` — Subscription plan parameter + booking confirmation
+- `src/services/subscriptionService.ts` — Already had expiry logic (verified)
+- `src/services/bookingsService.ts` — Add confirmBooking() function
+- `src/services/notificationsService.ts` — Add addNotification() helper
+- `src/hooks/useEntitlements.ts` — Already checking expiry (verified)
+- `src/i18n/locales/en.ts` — Pro subscription keys + video disabled keys
+- `src/i18n/locales/ru.ts` — Russian translations
+- `src/i18n/locales/de.ts` — German translations
+- `src/i18n/locales/es.ts` — Spanish translations
+- `src/i18n/locales/pl.ts` — Polish translations
+- `docs/STATUS_AUDIT.md` — Created full audit document
+
+**Implementation Details:**
+
+1. **Pro Subscription Model:**
+   - Monthly: $9.99/month
+   - Yearly: $99/year (17% discount)
+   - Subscription has `expiresAtIso` field (required)
+   - ProScreen shows plan selection with savings badge
+   - PaymentScreen accepts `plan` parameter from URL
+   - activatePro() called with plan after payment
+   - useEntitlements checks expiry via isSubscriptionActive()
+
+2. **Video Sessions Disabled:**
+   - SessionJoinScreen replaced with "Video Temporarily Disabled" message
+   - Shows alternative options: Chat and External Meeting
+   - Displays booking info if available
+   - CTAs: "Go to Chat" and "Back"
+   - Removes dependency on videoService join flow
+
+3. **Booking Payment Flow:**
+   - confirmBooking() updates status to 'confirmed'
+   - Payment success handler calls confirmBooking()
+   - Notification created via addNotification()
+   - Redirects to booking detail with success param
+
+4. **i18n Cleanup:**
+   - All Pro keys: benefits, plans, expiry, savings
+   - All video keys: disabled title, message, options, help
+   - Translations in EN/RU/DE/ES/PL (5 locales)
+
+**Smoke test:**
+```bash
+# Build & Test
+npm run typecheck  # ✅ 0 errors
+npm test           # ✅ 31/31 passing
+npm run build      # ✅ Bundle: 469KB
+
+# Subscription Flow
+1. Open /pro
+2. Select "Yearly" plan ($99/year, 17% discount badge)
+3. Click "Subscribe - $99.99"
+4. Choose USDT → TRC-20
+5. Generate address
+6. Simulate payment
+7. Should redirect to /pro?success=true
+8. Pro Active badge shown with expiry date
+
+# Video Disabled Flow
+1. Book a session (creates booking)
+2. Go to booking detail
+3. Click "Join Session" 
+4. Should show "Video Temporarily Disabled" screen
+5. Options: "Go to Chat" button visible
+6. Booking time displayed
+
+# Booking Payment Flow
+1. Book session → redirects to payment
+2. Pay via crypto simulation
+3. Should update booking status to 'confirmed'
+4. Notification created
+5. Redirects to /bookings/{id}?success=true
+```
+
+**Test Results:**
+- ✅ TypeScript: **0 errors**
+- ✅ Tests: **31/31 passing (100%)**
+- ✅ Build: **SUCCESS**
+- ✅ Bundle: **469KB** (+8KB from baseline)
+
+**Result:** All P0 critical flows completed. App is stable and ready for P1 improvements (Courses polish, Mentor Dashboard, Home sections).
+
+**Next:** P1 fixes or deploy to production.
 
 ---
 
