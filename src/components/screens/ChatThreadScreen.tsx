@@ -91,13 +91,8 @@ export const ChatThreadScreen: React.FC = () => {
         const isPro = sub && isSubscriptionActive(sub);
 
         if (otherId) {
-            // Store mounted state to prevent memory leak
-            let isMounted = true;
-            
-            const timeoutId = setTimeout(() => {
-                // Don't execute if component unmounted
-                if (!isMounted) return;
-                
+            // AI response with delay (simulate thinking time)
+            setTimeout(() => {
                 let response: string;
 
                 if (!hasAPIKey) {
@@ -130,12 +125,6 @@ export const ChatThreadScreen: React.FC = () => {
                 });
                 refreshChat();
             }, 1500 + Math.random() * 1000); // 1.5 - 2.5s delay
-            
-            // Cleanup function to prevent memory leak
-            return () => {
-                isMounted = false;
-                clearTimeout(timeoutId);
-            };
         }
     }
     
