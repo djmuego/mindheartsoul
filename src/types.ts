@@ -118,6 +118,7 @@ export interface Booking {
   meetingUrl?: string;
   createdAtIso: string;
   paymentId?: string;
+  cancelReason?: string;
 }
 
 // Payments
@@ -209,7 +210,7 @@ export interface SubscriptionRecord {
   renewalPaymentId?: string; // Link to last payment
 }
 
-export type NotificationType = 'booking_confirmed' | 'payment_success' | 'mentor_approved' | 'system_alert';
+export type NotificationType = 'booking_confirmed' | 'booking_approved' | 'booking_declined' | 'lesson_completed' | 'subscription_purchased' | 'subscription_expired' | 'payment_success' | 'mentor_approved' | 'system_alert';
 
 export interface NotificationItem {
   id: string;

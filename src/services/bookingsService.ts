@@ -84,6 +84,38 @@ export const confirmBooking = (bookingId: string, paymentId?: string): Booking |
   return booking;
 };
 
+/**
+ * Approve booking request (mentor action)
+ */
+export const approveBooking = (bookingId: string): Booking | null => {
+  return updateBookingStatus(bookingId, 'confirmed');
+};
+
+/**
+ * Decline booking request (mentor action)
+ */
+export const declineBooking = (bookingId: string, reason?: string): Booking | null => {
+  const booking = getBookingById(bookingId);
+  if (!booking) return null;
+  
+  booking.status = 'cancelled';
+  if (reason) {
+    booking.cancelReason = reason;
+  }
+  saveBooking(booking);
+  return booking;
+};
+
+/**
+ * Get bookings by mentor ID (for mentor dashboard)
+ */
+export const getBookingsByMentor = (mentorId: string): Booking[] => {
+  const all = getBookings();
+  return all
+    .filter(b => b.mentorId === mentorId)
+    .sort((a, b) => new Date(a.startsAtIso).getTime() - new Date(b.startsAtIso).getTime());
+};
+
 // --- Mock Slots Generator ---
 
 export const getMockTimeSlots = (mentorId: string, dateIso: string): string[] => {
