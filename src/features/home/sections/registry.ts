@@ -2,10 +2,11 @@ import { HomeSectionDef } from './types';
 import { UpcomingSessionSection } from './UpcomingSessionSection';
 import { DailyInsightSection } from './DailyInsightSection';
 import { RecommendedMentorsSection } from './RecommendedMentorsSection';
-import { FeaturedContentSection } from './FeaturedContentSection';
-import { CommunityHighlightsSection } from './CommunityHighlightsSection';
-import { CTAProfileBirthDataSection } from './CTAProfileBirthDataSection';
-import { ContinueLearningSection } from './ContinueLearningSection';
+// Removed unused sections (will be re-added in Phase 2 when Home screen is rebuilt)
+// import { FeaturedContentSection } from './FeaturedContentSection';
+// import { CommunityHighlightsSection } from './CommunityHighlightsSection';
+// import { CTAProfileBirthDataSection } from './CTAProfileBirthDataSection';
+// import { ContinueLearningSection } from './ContinueLearningSection';
 import { NotificationsPreviewSection } from './NotificationsPreviewSection';
 
 /**

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
-import { ChevronLeft, DollarSign, MessageCircle, AlertCircle, CheckCircle, XCircle, Clock, MapPin } from 'lucide-react';
+import { ChevronLeft, DollarSign, MessageCircle, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
 import { getBookingById, updateBookingStatus } from '../../services/bookingsService';
 import { getMentorById } from '../../services/mockData';
 import { useLanguage } from '../../context/LanguageContext';

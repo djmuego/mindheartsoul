@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Heart, Clock, Play } from 'lucide-react';
+import { ChevronLeft, Heart, Clock } from 'lucide-react';
 import { Brand } from '../../constants';
 import { useT } from '../../i18n/useT';
 
