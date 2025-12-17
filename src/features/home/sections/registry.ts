@@ -20,64 +20,43 @@ import { NotificationsPreviewSection } from './NotificationsPreviewSection';
  * 
  * Sections are sorted by priority (lower number = higher priority)
  */
+// CHAT CONSULTATIONS ONLY - Simplified home sections
+// Removed sections for disabled modules (Community, Courses, Astrology/Birth Data)
 export const HOME_SECTIONS: HomeSectionDef[] = [
-  {
-    id: 'cta_profile_birth_data',
-    enabled: true,
-    component: CTAProfileBirthDataSection,
-    priority: 10,
-    // CTA for profile setup - show to all users
-  },
-  {
-    id: 'continue_learning',
-    enabled: true,
-    component: ContinueLearningSection,
-    priority: 15,
-    // Continue learning - show last active course
-  },
   {
     id: 'upcoming_session',
     enabled: true,
     component: UpcomingSessionSection,
-    priority: 20,
-    // Show upcoming sessions - for all authenticated users
-  },
-  {
-    id: 'notifications_preview',
-    enabled: true,
-    component: NotificationsPreviewSection,
-    priority: 25,
-    // Latest notifications preview - for all users
-  },
-  {
-    id: 'daily_insight',
-    enabled: true,
-    component: DailyInsightSection,
-    priority: 30,
-    // Daily insight - for all users
-  },
-  {
-    id: 'featured_content',
-    enabled: true,
-    component: FeaturedContentSection,
-    priority: 35,
-    // Featured content - for all users
+    priority: 10,
+    // Show upcoming mentor sessions - core feature
   },
   {
     id: 'recommended_mentors',
     enabled: true,
     component: RecommendedMentorsSection,
-    priority: 40,
-    // Recommended mentors - only for regular users
+    priority: 20,
+    // Recommend mentors for consultation - core feature
     roles: ['user'],
   },
   {
-    id: 'community_highlights',
+    id: 'notifications_preview',
     enabled: true,
-    component: CommunityHighlightsSection,
-    priority: 50,
-    // Community highlights - for all users
-  }
+    component: NotificationsPreviewSection,
+    priority: 30,
+    // Latest notifications (booking confirmations, etc)
+  },
+  {
+    id: 'daily_insight',
+    enabled: true,
+    component: DailyInsightSection,
+    priority: 40,
+    // Daily motivational insight - keeps UI friendly
+  },
+  // DISABLED for Chat Consultations product:
+  // - cta_profile_birth_data (birth profile for Astrology/HD)
+  // - continue_learning (Courses disabled)
+  // - featured_content (content modules disabled)
+  // - community_highlights (Community disabled)
 ];
 
 /**

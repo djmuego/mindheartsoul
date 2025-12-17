@@ -70,6 +70,7 @@ export const getConversationsByUser = (userId: string): Conversation[] => {
  */
 export const getConversationById = (conversationId: string): Conversation | null => {
   const conversations = storage.getJSON<Conversation[]>(STORAGE_KEYS.CHATS, []);
+  console.log('[chatService] getConversationById:', conversationId, 'found:', conversations.find(c => c.id === conversationId) ? 'yes' : 'no', 'total:', conversations.length);
   return conversations.find(c => c.id === conversationId) || null;
 };
 

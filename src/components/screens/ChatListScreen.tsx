@@ -14,12 +14,22 @@ export const ChatListScreen: React.FC = () => {
 
   useEffect(() => {
     if (!user) return;
+    
+    console.log('[ChatList] Seeding chat for user:', user.id);
     seedChatIfEmpty(user.id, user.name);
+    
+    const loadConversations = () => {
+      const convs = getConversationsByUser(user.id);
+      console.log('[ChatList] Loaded conversations:', convs.length);
+      setConversations(convs);
+    };
+    
+    // Initial load
+    loadConversations();
+    
     // In a real app we'd subscribe to updates
-    const interval = setInterval(() => {
-       setConversations(getConversationsByUser(user.id));
-    }, 3000);
-    setConversations(getConversationsByUser(user.id));
+    const interval = setInterval(loadConversations, 3000);
+    
     return () => clearInterval(interval);
   }, [user]);
 

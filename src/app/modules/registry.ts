@@ -2,6 +2,7 @@
 import { AppModule, RegistryContext } from './types';
 import { homeModule } from './homeModule';
 import { mentorsModule } from './mentorsModule';
+import { sessionsModule } from './sessionsModule';
 import { natalModule } from './natalModule';
 import { communityModule } from './communityModule';
 import { profileModule } from './profileModule';
@@ -15,22 +16,28 @@ import { mentorDashboardModule } from './mentorDashboardModule';
 import { astrologyModule } from './astrologyModule';
 import { humanDesignModule } from './humanDesignModule';
 import { paymentsModule } from './paymentsModule';
+import { numerologyModule } from './numerologyModule';
+import { meditationModule } from './meditationModule';
 
+// CHAT CONSULTATIONS ONLY - Core modules for Mentor → Booking → Messages flow
 export const ALL_MODULES: AppModule[] = [
   homeModule,
   mentorsModule,
-  natalModule,
-  communityModule,
+  sessionsModule, // NEW: My Sessions list
+  // natalModule, // DISABLED - Not part of Chat Consultations product
+  // communityModule, // DISABLED - Not part of Chat Consultations product
   profileModule,
   chatModule,
   notificationsModule,
-  coursesModule,
+  // coursesModule, // DISABLED - Not part of Chat Consultations product
   settingsModule,
   proModule,
   adminModule,
   mentorDashboardModule,
-  astrologyModule,
-  humanDesignModule,
+  // astrologyModule, // DISABLED - Not part of Chat Consultations product
+  // numerologyModule, // DISABLED - Not part of Chat Consultations product
+  // meditationModule, // DISABLED - Not part of Chat Consultations product
+  // humanDesignModule, // DISABLED - Not part of Chat Consultations product
   paymentsModule
 ];
 

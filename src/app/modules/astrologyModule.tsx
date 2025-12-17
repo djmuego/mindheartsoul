@@ -6,6 +6,6 @@ export const astrologyModule: AppModule = {
   id: 'astrology',
   featureFlag: 'astrologyEnabled',
   routes: [
-    { path: 'astrology', element: <AstrologyScreen /> }
+    { path: '/astrology', element: <AstrologyScreen />, layout: 'scaffold' }
   ]
 };

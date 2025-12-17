@@ -4,6 +4,8 @@ export default {
 
   'nav.home': 'Home',
   'nav.mentors': 'Mentors',
+  'nav.sessions': 'My Sessions',
+  'nav.messages': 'Messages',
   'nav.natal': 'Natal',
   'nav.community': 'Community',
   'nav.profile': 'Profile',
@@ -45,6 +47,9 @@ export default {
 
   'chat.title': 'Messages',
   'chat.noMessages': 'No more messages',
+  'chat.conversationNotFound': 'Conversation Not Found',
+  'chat.conversationNotFoundDesc': 'This conversation may have been deleted or does not exist.',
+  'chat.backToChats': 'Back to Chats',
 
   'courses.title': 'Courses',
   'courses.viewAll': 'View all',
@@ -81,12 +86,20 @@ export default {
   'natal.positions': 'Planetary Positions',
   'natal.modules': 'Advanced Charts',
   'natal.astrology': 'Astrology',
+  'natal.numerology': 'Numerology',
+  'natal.meditation': 'Meditation',
   'natal.humanDesign': 'Human Design',
 
   'astrology.title': 'Astrology',
-  'astrology.desc': 'Deep dive into planetary transits and aspects. Coming soon.',
+  'astrology.desc': 'Deep dive into planetary transits and aspects.',
+  'numerology.title': 'Numerology',
+  'numerology.desc': 'Discover the meaning of numbers in your life.',
+  'numerology.comingSoon': 'Numerology insights coming soon. Stay tuned!',
+  'meditation.title': 'Meditation',
+  'meditation.desc': 'Guided meditations for mind, heart, and soul.',
+  'meditation.comingSoon': 'Meditation library coming soon.',
   'hd.title': 'Human Design',
-  'hd.desc': 'Discover your energy type and strategy. Coming soon.',
+  'hd.desc': 'Discover your energy type and strategy.',
 
   'profile.title': 'Profile',
   'profile.subtitle': 'Explorer of Life',
@@ -200,6 +213,10 @@ export default {
 
   'ai.limitReached': 'Daily Limit Reached',
   'ai.upgradeToChat': 'Upgrade to Pro for unlimited chats.',
+  'ai.unavailable': 'AI assistant is temporarily unavailable',
+  'ai.unavailableDesc': 'Please try again later or contact support.',
+  'ai.proOnly': 'AI insights available for Pro members',
+  'ai.proOnlyDesc': 'Upgrade to continue our conversation!',
 
   'blueprint.title': 'My Blueprint',
   'blueprint.ctaTitle': 'Unlock Your Blueprint',
@@ -220,4 +237,12 @@ export default {
   'error.copyDetails': 'Copy Error Details',
   'error.copied': 'Copied!',
   'error.helpText': 'If the problem persists, please contact support.',
+
+  'booking.openChat': 'Open Chat',
+  
+  'disabled.title': 'Feature Disabled',
+  'disabled.heading': 'This feature is currently unavailable',
+  'disabled.message': 'This section is disabled in consultation mode. Connect with your mentor via chat consultations.',
+  'disabled.findMentor': 'Find a Mentor',
+  'disabled.openChat': 'Open Chat',
 };

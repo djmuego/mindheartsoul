@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
-import { ChevronLeft, DollarSign, ExternalLink, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { ChevronLeft, DollarSign, MessageCircle, AlertCircle, CheckCircle, XCircle, Clock, MapPin } from 'lucide-react';
 import { getBookingById, updateBookingStatus } from '../../services/bookingsService';
 import { getMentorById } from '../../services/mockData';
 import { useLanguage } from '../../context/LanguageContext';
@@ -37,9 +37,10 @@ export const BookingDetailScreen: React.FC = () => {
     setRefresh(r => r + 1);
   };
 
-  const handleJoin = () => {
-    // Navigate to SessionJoinScreen for better UX and join status validation
-    navigate(`/sessions/${booking.id}`);
+  const handleOpenChat = () => {
+    // Open chat with mentor for this booking/session
+    // Use mentor ID to create/open conversation thread
+    navigate(`/chat/mentor-${booking.mentorId}`);
   };
 
   const StatusBadge = () => {
@@ -99,11 +100,11 @@ export const BookingDetailScreen: React.FC = () => {
 
         {booking.status === 'confirmed' && (
           <button 
-            onClick={handleJoin}
+            onClick={handleOpenChat}
             className={`w-full py-4 flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-green-200 dark:shadow-none`}
           >
-            <ExternalLink size={20} />
-            <span>{t('booking.join')}</span>
+            <MessageCircle size={20} />
+            <span>{t('booking.openChat') || 'Open Chat'}</span>
           </button>
         )}
 

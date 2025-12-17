@@ -1,19 +1,55 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
-import { ChevronLeft, Star, Globe, Clock } from 'lucide-react';
+import { ChevronLeft, Star, Globe, Clock, MessageCircle } from 'lucide-react';
 import { getMentorById } from '../../services/mockData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useSession } from '../../context/SessionContext';
+import { getOrCreateConversation } from '../../services/chatService';
 
 export const MentorProfileScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useSession();
   
   const mentor = getMentorById(id || '');
+  
+  const handleOpenChat = () => {
+    if (!user || !mentor) return;
+    
+    // Get or create conversation with this mentor
+    const conversation = getOrCreateConversation(
+      user.id,
+      mentor.userId,
+      [user.name, mentor.name],
+      [user.avatarDataUrl, mentor.avatarUrl]
+    );
+    
+    // Navigate to chat thread
+    navigate(`/chat/${conversation.id}`);
+  };
 
   if (!mentor) {
-    return <div className="p-8 text-center">Mentor not found</div>;
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-md text-center shadow-lg">
+          <div className="text-6xl mb-4">🤷</div>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+            Mentor Not Found
+          </h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">
+            This mentor profile doesn't exist or has been removed.
+          </p>
+          <button
+            onClick={() => navigate('/mentors')}
+            className="px-6 py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg font-bold transition-colors"
+          >
+            Back to Mentors
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -66,6 +102,15 @@ export const MentorProfileScreen: React.FC = () => {
                </span>
              ))}
            </div>
+           
+           {/* Open Chat CTA */}
+           <button
+             onClick={handleOpenChat}
+             className="mt-6 w-full flex items-center justify-center space-x-2 py-3 bg-white dark:bg-slate-800 border-2 border-indigo-500 text-indigo-600 dark:text-indigo-400 rounded-xl font-semibold hover:bg-indigo-50 dark:hover:bg-slate-700 transition-colors"
+           >
+             <MessageCircle size={20} />
+             <span>{t('booking.openChat') || 'Open Chat'}</span>
+           </button>
         </div>
 
         {/* Services */}

@@ -31,7 +31,13 @@ export const PostDetailScreen: React.FC = () => {
   const handleLike = () => {
     if (!user) return;
     toggleLike(post.id, user.id);
-    setPost(getPostById(post.id)); // update local state
+    const updatedPost = getPostById(post.id);
+    if (updatedPost) {
+      setPost(updatedPost); // update local state
+    } else {
+      // Post was deleted, navigate back
+      navigate(-1);
+    }
   };
 
   const handleSendComment = () => {
@@ -39,7 +45,13 @@ export const PostDetailScreen: React.FC = () => {
     addComment(post.id, user, newComment);
     setNewComment('');
     setComments(getComments(post.id));
-    setPost(getPostById(post.id)); // update counts
+    const updatedPost = getPostById(post.id);
+    if (updatedPost) {
+      setPost(updatedPost); // update counts
+    } else {
+      // Post was deleted, navigate back
+      navigate(-1);
+    }
   };
 
   const handleReport = (reason: 'spam' | 'abuse' | 'other') => {
@@ -47,6 +59,18 @@ export const PostDetailScreen: React.FC = () => {
       reportPost(post.id, user.id, reason);
       setShowReportModal(false);
       alert(t('community.reported'));
+    }
+  };
+
+  const handleShare = async () => {
+    if (!post) return;
+    const url = `${window.location.origin}/#/post/${post.id}`;
+    const text = `${post.authorName}: ${post.text}\n${url}`;
+    try {
+        await navigator.clipboard.writeText(text);
+        alert("Post link copied to clipboard!"); 
+    } catch (err) {
+        console.error('Failed to copy: ', err);
     }
   };
 
@@ -111,7 +135,10 @@ export const PostDetailScreen: React.FC = () => {
                   <MessageCircle size={22} />
                   <span className="font-medium">{post.commentCount}</span>
                 </div>
-                <button className="flex items-center space-x-2 hover:text-indigo-500 dark:hover:text-indigo-400">
+                <button 
+                  onClick={handleShare}
+                  className="flex items-center space-x-2 hover:text-indigo-500 dark:hover:text-indigo-400"
+                >
                   <Share2 size={22} />
                 </button>
             </div>

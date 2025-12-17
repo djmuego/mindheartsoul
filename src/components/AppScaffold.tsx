@@ -36,9 +36,16 @@ export const AppScaffold: React.FC = () => {
       {/* Top Navigation Bar */}
       <header className="flex-none h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 z-50">
         <div className="max-w-md mx-auto h-full flex items-center justify-between px-4">
-          <span className={`font-semibold text-lg text-${Brand.colors.primary} dark:text-white`}>
-            {Brand.name}
-          </span>
+          <button 
+            onClick={() => navigate('/home')}
+            className="focus:outline-none hover:opacity-80 transition-opacity"
+          >
+            <img 
+              src="https://www.genspark.ai/api/files/s/7S2sX1jN" 
+              alt={Brand.name}
+              className="h-8 object-contain"
+            />
+          </button>
           <div className="flex items-center space-x-2">
             {headerActions.map((item) => (
               <button 

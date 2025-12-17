@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
 import { ChevronLeft, Send, Lock } from 'lucide-react';
 import { getConversationById, getMessagesByConversation, sendMessage, Message, Conversation } from '../../services/chatService';
+import { getSubscription, isSubscriptionActive } from '../../services/subscriptionService';
 import { useSession } from '../../context/SessionContext';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -18,22 +19,72 @@ export const ChatThreadScreen: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLimitReached, setIsLimitReached] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Early return if no user (shouldn't happen due to AuthGuard, but be safe)
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="text-center">
+          <p className="text-slate-600 dark:text-slate-400">Loading user...</p>
+        </div>
+      </div>
+    );
+  }
+
   const refreshChat = () => {
-    if (id) {
-       setConversation(getConversationById(id));
-       setMessages(getMessagesByConversation(id));
+    if (!id) return;
+    const conv = getConversationById(id);
+    setConversation(conv);
+    if (conv) {
+      setMessages(getMessagesByConversation(id));
     }
   };
 
   useEffect(() => {
-    refreshChat();
-    // Check limits on load
-    // Auto-refresh (polling simulation)
+    if (!id) {
+      console.log('[ChatThread] No conversation ID provided');
+      setNotFound(true);
+      return;
+    }
     
-    const interval = setInterval(refreshChat, 1000);
-    return () => clearInterval(interval);
+    console.log('[ChatThread] Loading conversation:', id);
+    
+    // Reset states on ID change
+    setNotFound(false);
+    setConversation(undefined);
+    setMessages([]);
+    
+    // Initial load
+    const loadConversation = () => {
+      const conv = getConversationById(id);
+      console.log('[ChatThread] Loaded conversation:', conv ? 'found' : 'null');
+      setConversation(conv);
+      if (conv) {
+        const msgs = getMessagesByConversation(id);
+        console.log('[ChatThread] Loaded messages:', msgs.length);
+        setMessages(msgs);
+      }
+    };
+    
+    loadConversation();
+    
+    // FIX: Add timeout to detect "conversation not found" (no infinite loading)
+    const notFoundTimeout = setTimeout(() => {
+      const conv = getConversationById(id);
+      if (!conv) {
+        console.log('[ChatThread] Conversation not found after timeout');
+        setNotFound(true);
+      }
+    }, 1500);
+    
+    const interval = setInterval(loadConversation, 3000);
+    
+    return () => {
+      clearInterval(interval);
+      clearTimeout(notFoundTimeout);
+    };
   }, [id]);
 
   useEffect(() => {
@@ -41,28 +92,124 @@ export const ChatThreadScreen: React.FC = () => {
   }, [messages.length]);
 
   const handleSend = async () => {
-    if (!inputText.trim() || !user || !id) return;
+    // PROMPT requirement D: "Messages железобетон" - messages ALWAYS work
+    // Even without API key or Pro status, basic chat functionality is guaranteed
+    if (!inputText.trim() || !user || !id || !conversation) return;
     
     const text = inputText;
-    setInputText('');
+    setInputText(''); // Clear input immediately (required by PROMPT)
     
+    // 1. Send User Message (ALWAYS works, regardless of API key or Pro status)
     try {
-      sendMessage({
+      const newMessage = sendMessage({
         conversationId: id,
         senderId: user.id,
         senderName: user.name,
         senderAvatar: user.avatarDataUrl,
         text: text
       });
-      refreshChat();
+      // FIX: Immediately update UI state (don't wait for refreshChat polling)
+      setMessages(prev => [...prev, newMessage]);
     } catch (e: any) {
-      if (e.message === 'LIMIT_REACHED') setIsLimitReached(true);
+      console.error('Failed to send message:', e);
+      // Basic error handling: show alert or set error state
+      alert('Failed to send message. Please try again.');
+      return;
     }
     
-    refreshChat();
+    // 2. Check if AI/Assistant conversation
+    const isAIConversation = conversation.participantIds.some(pid => 
+      pid === 'support_bot' || pid.startsWith('ai_') || pid.startsWith('sys_')
+    );
+
+    // 3. AI Response Logic (only for AI conversations)
+    if (isAIConversation) {
+        const otherId = conversation.participantIds.find(pid => pid !== user.id);
+        const otherIndex = conversation.participantIds.indexOf(otherId || '');
+        const otherName = otherIndex >= 0 ? conversation.participantNames[otherIndex] : 'Assistant';
+        const otherAvatar = otherIndex >= 0 ? conversation.participantAvatars?.[otherIndex] : undefined;
+
+        // Check API key availability
+        const hasAPIKey = Boolean(import.meta.env.VITE_GEMINI_API_KEY);
+        
+        // Check Pro status
+        const sub = getSubscription(user.id);
+        const isPro = sub && isSubscriptionActive(sub);
+
+        if (otherId) {
+            // AI response with delay (simulate thinking time)
+            setTimeout(() => {
+                let response: string;
+
+                if (!hasAPIKey) {
+                    // No API key: friendly unavailable message
+                    response = "AI assistant is temporarily unavailable. Please try again later or contact support.";
+                } else if (!isPro) {
+                    // Has API key but not Pro: upsell message
+                    response = "AI insights are available for Pro members. Upgrade to continue our conversation!";
+                    setIsLimitReached(true);
+                } else {
+                    // Pro user with API key: normal response
+                    const responses = [
+                        "That is an interesting perspective. Could you elaborate?",
+                        "Based on your natal chart, this is a good time for reflection.",
+                        "I hear you. How does this align with your goals?",
+                        "Focus on your inner authority today.",
+                        "Let's explore that further. What specific challenges are you facing?",
+                        "This resonates with your Human Design profile.",
+                        "I am here to support you on this journey."
+                    ];
+                    response = responses[Math.floor(Math.random() * responses.length)];
+                }
+
+                sendMessage({
+                    conversationId: id,
+                    senderId: otherId,
+                    senderName: otherName,
+                    senderAvatar: otherAvatar,
+                    text: response
+                });
+                refreshChat();
+            }, 1500 + Math.random() * 1000); // 1.5 - 2.5s delay
+        }
+    }
+    
+    // 4. For non-AI conversations (mentor, user-to-user), no auto-response needed
+    // Messages just work, no gating
   };
 
-  if (!conversation) return <div className="p-8 text-center">Loading...</div>;
+  // Handle loading and not found states
+  if (notFound) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="text-center p-8">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+            {t('chat.conversationNotFound') || 'Conversation Not Found'}
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">
+            {t('chat.conversationNotFoundDesc') || 'This conversation may have been deleted or does not exist.'}
+          </p>
+          <button
+            onClick={() => navigate('/chat')}
+            className={`px-6 py-3 bg-${Brand.colors.primary} text-white rounded-full hover:bg-indigo-700 transition-colors font-semibold`}
+          >
+            {t('chat.backToChats') || 'Back to Chats'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!conversation) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Loading conversation...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-200">

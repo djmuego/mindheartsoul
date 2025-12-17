@@ -6,7 +6,7 @@ import { MentorProfileScreen } from '../../components/screens/MentorProfileScree
 import { BookingScreen } from '../../components/screens/BookingScreen';
 import { BookingConfirmScreen } from '../../components/screens/BookingConfirmScreen';
 import { BookingDetailScreen } from '../../components/screens/BookingDetailScreen';
-import { SessionJoinScreen } from '../../components/screens/SessionJoinScreen';
+// import { SessionJoinScreen } from '../../components/screens/SessionJoinScreen'; // REMOVED - Video sessions disabled
 
 export const mentorsModule: AppModule = {
   id: 'mentors',
@@ -22,11 +22,7 @@ export const mentorsModule: AppModule = {
     { path: 'mentors/:id', element: <MentorProfileScreen /> },
     { path: 'book/:mentorId', element: <BookingScreen /> },
     { path: 'book/confirm/:mentorId', element: <BookingConfirmScreen /> },
-    { path: 'booking/:id', element: <BookingDetailScreen /> },
-    { 
-      path: 'sessions/:sessionId', 
-      element: <SessionJoinScreen />,
-      layout: 'fullscreen' // Video session is fullscreen
-    }
+    { path: 'booking/:id', element: <BookingDetailScreen /> }
+    // VIDEO SESSION ROUTE REMOVED - Chat Consultations Only
   ]
 };

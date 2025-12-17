@@ -6,15 +6,14 @@ import { ChatThreadScreen } from '../../components/screens/ChatThreadScreen';
 
 export const chatModule: AppModule = {
   id: 'chat',
-  featureFlag: 'aiGuideEnabled', // Chat primarily drives AI in this MVP
-  headerActions: [
-    {
-      id: 'chat-action',
-      icon: MessageCircle,
-      path: '/chat',
-      order: 20
-    }
-  ],
+  // featureFlag: 'aiGuideEnabled', // REMOVED - Chat is core feature for Chat Consultations
+  nav: {
+    placement: 'bottom',
+    order: 30,
+    icon: MessageCircle,
+    path: '/chat',
+    labelKey: 'nav.messages'
+  },
   routes: [
     { path: 'chat', element: <ChatListScreen /> },
     { path: 'chat/:id', element: <ChatThreadScreen /> }
