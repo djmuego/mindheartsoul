@@ -19,6 +19,7 @@ export const ChatThreadScreen: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLimitReached, setIsLimitReached] = useState(false);
+  const [notFound, setNotFound] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const refreshChat = () => {
@@ -29,17 +30,37 @@ export const ChatThreadScreen: React.FC = () => {
   };
 
   useEffect(() => {
-    refreshChat();
-    // Check limits on load
-    if (user && id) {
-       const sub = getSubscription(user.id);
-       const isPro = sub && isSubscriptionActive(sub);
-       // Optional: Check if they already hit a limit in previous session? 
-       // For now, we reset limit state on reload unless we store it.
+    if (!id) {
+      setNotFound(true);
+      return;
     }
     
-    const interval = setInterval(refreshChat, 3000); // Reduced polling frequency
-    return () => clearInterval(interval);
+    // Initial load
+    refreshChat();
+    
+    // FIX: Add timeout to detect "conversation not found" (no infinite loading)
+    const notFoundTimeout = setTimeout(() => {
+      if (conversation === null) {
+        setNotFound(true);
+      }
+    }, 2000);
+    
+    const interval = setInterval(refreshChat, 3000);
+    
+    // Check subscription limits
+    if (user) {
+      const sub = getSubscription(user.id);
+      const isPro = sub && isSubscriptionActive(sub);
+      if (!isPro) {
+        // Non-Pro users might hit limits in AI conversations
+        // This is checked per-message in handleSend
+      }
+    }
+    
+    return () => {
+      clearInterval(interval);
+      clearTimeout(notFoundTimeout);
+    };
   }, [id, user]);
 
   useEffect(() => {
@@ -56,14 +77,15 @@ export const ChatThreadScreen: React.FC = () => {
     
     // 1. Send User Message (ALWAYS works, regardless of API key or Pro status)
     try {
-      sendMessage({
+      const newMessage = sendMessage({
         conversationId: id,
         senderId: user.id,
         senderName: user.name,
         senderAvatar: user.avatarDataUrl,
         text: text
       });
-      refreshChat();
+      // FIX: Immediately update UI state (don't wait for refreshChat polling)
+      setMessages(prev => [...prev, newMessage]);
     } catch (e: any) {
       console.error('Failed to send message:', e);
       // Basic error handling: show alert or set error state
@@ -132,7 +154,38 @@ export const ChatThreadScreen: React.FC = () => {
     // Messages just work, no gating
   };
 
-  if (!conversation) return <div className="p-8 text-center">Loading...</div>;
+  // Handle loading and not found states
+  if (notFound) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="text-center p-8">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+            {t('chat.conversationNotFound') || 'Conversation Not Found'}
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">
+            {t('chat.conversationNotFoundDesc') || 'This conversation may have been deleted or does not exist.'}
+          </p>
+          <button
+            onClick={() => navigate('/chat')}
+            className={`px-6 py-3 bg-${Brand.colors.primary} text-white rounded-full hover:bg-indigo-700 transition-colors font-semibold`}
+          >
+            {t('chat.backToChats') || 'Back to Chats'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!conversation) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Loading conversation...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-200">

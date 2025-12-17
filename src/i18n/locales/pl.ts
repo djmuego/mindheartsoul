@@ -1,9 +1,6 @@
-// TEMPORARY: EN-first strategy for Chat Consultations sprint
-// All text is in English during development phase
-// TODO: Backfill real PL translations in separate PR after core functionality is stable
 
 export default {
-    __meta: { code: 'pl', name: 'Polski', nativeName: 'Polski' },
+  __meta: { code: 'pl', name: 'PL', nativeName: 'English' },
 
   'nav.home': 'Home',
   'nav.mentors': 'Mentors',
@@ -50,6 +47,9 @@ export default {
 
   'chat.title': 'Messages',
   'chat.noMessages': 'No more messages',
+  'chat.conversationNotFound': 'Conversation Not Found',
+  'chat.conversationNotFoundDesc': 'This conversation may have been deleted or does not exist.',
+  'chat.backToChats': 'Back to Chats',
 
   'courses.title': 'Courses',
   'courses.viewAll': 'View all',
