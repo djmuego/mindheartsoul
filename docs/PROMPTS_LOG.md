@@ -607,3 +607,77 @@ npm run dev     # start dev server
 
 **⚠️ CI Workflow Note:** `.github/workflows/ci.yml.template` created but not activated due to GitHub App permissions. User must rename or manually create workflow file.
 
+
+
+---
+
+## HUMAN DESIGN REFERENCE LOCKED
+
+**Date:** 2025-12-17  
+**Reference Site:** https://www.myhumandesign.com/  
+**Status:** 📋 DEFERRED TO P2 (Architecture documented, implementation pending)
+
+### PURPOSE
+
+Lock UX/IA reference for Human Design module before RC completion to prevent future scope drift.
+
+### REFERENCE ANALYSIS COMPLETE
+
+**Document Created:** `docs/REFERENCES/HUMAN_DESIGN_MYHUMANDESIGN.md` (14KB)
+
+**Key Takeaways from Reference:**
+1. **Entry Flow:** "Get Your Chart" wizard with birth data → Type-first reveal
+2. **IA Hierarchy:** Type (primary) → Essentials (Type/Authority/Profile) → Deep Dive (Centers/Channels/Gates)
+3. **UX Pattern:** Progressive disclosure, education-first, clear empty states
+4. **Taxonomy:** 5 Types, 7 Authorities, 12 Profiles, 9 Centers, 36 Channels, 64 Gates
+
+**Component Spec:**
+- `BirthDataForm.tsx` — Wizard with location autocomplete + timezone hint
+- `TypeCard.tsx` — Primary display (Type + Strategy + Signature/Not-self)
+- `AuthorityCard.tsx` — Decision-making guidance
+- `ProfileCard.tsx` — Life theme explanation
+- `CentersGrid.tsx` — 9 centers visual
+- `BodygraphCanvas.tsx` — SVG renderer (complex, P2 focus)
+
+**Technical Roadmap (P2):**
+- **Phase 1:** Data model + wizard (1 week)
+- **Phase 2:** Calculation engine (hdkit MIT license) (1 week)
+- **Phase 3:** UI components (Type/Authority/Profile) (1 week)
+- **Phase 4:** Bodygraph renderer (SVG-based) (1 week)
+- **Phase 5:** i18n + testing (1 week)
+- **Total Estimate:** 5 weeks, 1 engineer
+
+**Licensing Considerations:**
+- Swiss Ephemeris: GPL or commercial (~$500-1000)
+- Recommendation: Use hdkit (MIT) + NASA JPL ephemeris (public domain)
+- Human Design System trademark: Credit Ra Uru Hu, link to Jovian Archive
+
+**Empty States Defined:**
+- No birth data: "Discover Your Human Design" + "Get Your Chart" CTA
+- Engine not ready: "Check back soon" + "Explore Other Features" CTA
+- Section-specific: "Learn About [Concept]" + "Back to Overview" CTA
+
+### FILES CHANGED
+
+**Added:**
+- `docs/REFERENCES/HUMAN_DESIGN_MYHUMANDESIGN.md` (14KB spec)
+
+**Updated:**
+- `docs/STATUS_AUDIT.md` (HD module reference note)
+- `docs/PROMPTS_LOG.md` (this entry)
+
+### IMPACT
+
+✅ HD module architecture locked and documented  
+✅ UX patterns captured from best-in-class reference  
+✅ Technical roadmap ready for P2 prioritization  
+✅ Licensing risks identified and mitigated  
+✅ i18n strategy defined (5 locales, HD-specific terminology)
+
+**Next Steps:**
+- P2 sprint planning (when prioritized)
+- Ephemeris licensing decision
+- Budget approval for commercial license (if needed)
+
+**Note:** This does NOT implement HD features. It locks the architecture so RC tasks can proceed without scope creep.
+

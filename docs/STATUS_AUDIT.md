@@ -30,7 +30,7 @@
 | Profile | ✅ DONE | ✅ | ✅ | Profile + Blueprint + Settings |
 | Natal | ✅ DONE | ✅ | ✅ | Birth profile + charts working |
 | Astrology | 📋 DEFERRED | N/A | N/A | Mock data, engine deferred to future |
-| Human Design | 📋 DEFERRED | N/A | N/A | Clean placeholder, Bodygraph deferred |
+| Human Design | 📋 DEFERRED | N/A | N/A | Clean placeholder, Bodygraph deferred, **Reference locked: myhumandesign.com** |
 | Mentors | ✅ DONE | ✅ | ✅ | List + Profile + Booking flow |
 | Booking | ✅ DONE | ✅ | ✅ | Payment flow complete with confirmations |
 | Courses | ✅ DONE | ✅ | ✅ | CRUD + Payment + Lesson completion |
