@@ -121,15 +121,26 @@ export interface Booking {
 }
 
 // Payments
+export type PaymentProvider = 'apirone' | 'stripe' | 'paypal';
+export type PaymentCurrency = 'USD' | 'BTC' | 'ETH' | 'USDT' | 'USDC' | 'TRX' | 'BNB' | 'LTC' | 'BCH' | 'DOGE';
+export type PaymentStatus = 'pending' | 'processing' | 'succeeded' | 'failed' | 'expired';
+export type PaymentPurpose = 'booking' | 'pro_subscription' | 'course' | 'donation';
+
 export interface PaymentRecord {
   id: string;
   userId: string;
-  bookingId: string;
+  purpose: PaymentPurpose;
+  relatedId?: string; // bookingId, courseId, etc
   amount: number;
-  currency: string;
-  provider: 'stripe_stub';
-  status: 'succeeded' | 'failed' | 'pending';
+  currency: PaymentCurrency;
+  provider: PaymentProvider;
+  status: PaymentStatus;
+  paymentAddress?: string; // For crypto payments
+  txHash?: string; // Blockchain transaction hash
+  metadata?: Record<string, any>;
   createdAtIso: string;
+  completedAtIso?: string;
+  expiresAtIso?: string;
 }
 
 // Video

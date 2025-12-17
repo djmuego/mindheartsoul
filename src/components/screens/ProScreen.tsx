@@ -4,22 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
 import { ChevronLeft, Check, Sparkles } from 'lucide-react';
 import { useT } from '../../i18n/useT';
-import { useSession } from '../../context/SessionContext';
-import { activatePro } from '../../services/subscriptionService';
 import { useEntitlements } from '../../hooks/useEntitlements';
 
 export const ProScreen: React.FC = () => {
   const navigate = useNavigate();
   const t = useT();
-  const { user } = useSession();
   const { isPro } = useEntitlements();
 
   const handleUpgrade = () => {
-    if (user) {
-      activatePro(user.id);
-      alert('Welcome to Pro!');
-      navigate(-1);
-    }
+    // Navigate to payment screen
+    navigate('/payment?purpose=pro_subscription&amount=9.99');
   };
 
   return (
@@ -41,13 +35,19 @@ export const ProScreen: React.FC = () => {
         <h1 className="text-3xl font-bold mb-2">{t('pro.title')}</h1>
         <p className="text-slate-400 mb-8">{t('pro.subtitle')}</p>
 
-        <div className="w-full max-w-sm bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-8">
+        <div className="w-full max-w-sm bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-6">
+          <div className="text-center mb-6">
+            <div className="text-4xl font-bold mb-2">$9.99</div>
+            <div className="text-sm text-slate-400">Lifetime Access</div>
+          </div>
           <ul className="space-y-4 text-left">
             {[
               'Unlimited AI Guide Chat',
               'Access Pro Courses',
               'Advanced Natal Insights',
-              'Priority Mentor Booking'
+              'Priority Mentor Booking',
+              'Human Design Full Report',
+              'Astrology Deep Dive'
             ].map((benefit, i) => (
               <li key={i} className="flex items-center space-x-3">
                 <div className="bg-green-500/20 text-green-400 p-1 rounded-full">

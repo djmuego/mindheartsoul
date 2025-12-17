@@ -5,7 +5,7 @@ import { Brand } from '../../constants';
 import { ChevronLeft, Calendar, Clock } from 'lucide-react';
 import { getMentorById } from '../../services/mockData';
 import { createBooking } from '../../services/bookingsService';
-import { processPayment } from '../../services/paymentsService';
+import { createPayment, markPaymentComplete } from '../../services/payments/paymentsService';
 import { useSession } from '../../context/SessionContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { pushNotification } from '../../services/notificationsService';
@@ -40,7 +40,19 @@ export const BookingConfirmScreen: React.FC = () => {
     );
 
     try {
-      await processPayment(user.id, booking.id, sessionType.price);
+      // Create payment record
+      const payment = createPayment({
+        userId: user.id,
+        purpose: 'booking',
+        relatedId: booking.id,
+        amount: sessionType.price,
+        currency: 'USD',
+        provider: 'stripe', // Default to Stripe for bookings
+        metadata: { mentorId: mentor.id, sessionTypeId: sessionType.id }
+      });
+
+      // Simulate instant payment success (stub)
+      markPaymentComplete(payment.id);
       
       // Notify
       pushNotification(user.id, 'booking_confirmed', 'notifications.bookingConfirmed', { bookingId: booking.id });
