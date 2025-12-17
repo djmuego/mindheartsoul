@@ -22,46 +22,70 @@ export const ChatThreadScreen: React.FC = () => {
   const [notFound, setNotFound] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Early return if no user (shouldn't happen due to AuthGuard, but be safe)
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-950">
+        <div className="text-center">
+          <p className="text-slate-600 dark:text-slate-400">Loading user...</p>
+        </div>
+      </div>
+    );
+  }
+
   const refreshChat = () => {
-    if (id) {
-       setConversation(getConversationById(id));
-       setMessages(getMessagesByConversation(id));
+    if (!id) return;
+    const conv = getConversationById(id);
+    setConversation(conv);
+    if (conv) {
+      setMessages(getMessagesByConversation(id));
     }
   };
 
   useEffect(() => {
     if (!id) {
+      console.log('[ChatThread] No conversation ID provided');
       setNotFound(true);
       return;
     }
     
+    console.log('[ChatThread] Loading conversation:', id);
+    
+    // Reset states on ID change
+    setNotFound(false);
+    setConversation(undefined);
+    setMessages([]);
+    
     // Initial load
-    refreshChat();
+    const loadConversation = () => {
+      const conv = getConversationById(id);
+      console.log('[ChatThread] Loaded conversation:', conv ? 'found' : 'null');
+      setConversation(conv);
+      if (conv) {
+        const msgs = getMessagesByConversation(id);
+        console.log('[ChatThread] Loaded messages:', msgs.length);
+        setMessages(msgs);
+      }
+    };
+    
+    loadConversation();
     
     // FIX: Add timeout to detect "conversation not found" (no infinite loading)
     const notFoundTimeout = setTimeout(() => {
-      if (conversation === null) {
+      const conv = getConversationById(id);
+      if (!conv) {
+        console.log('[ChatThread] Conversation not found after timeout');
         setNotFound(true);
       }
-    }, 2000);
+    }, 1500);
     
-    const interval = setInterval(refreshChat, 3000);
-    
-    // Check subscription limits
-    if (user) {
-      const sub = getSubscription(user.id);
-      const isPro = sub && isSubscriptionActive(sub);
-      if (!isPro) {
-        // Non-Pro users might hit limits in AI conversations
-        // This is checked per-message in handleSend
-      }
-    }
+    const interval = setInterval(loadConversation, 3000);
     
     return () => {
       clearInterval(interval);
       clearTimeout(notFoundTimeout);
     };
-  }, [id, user]);
+  }, [id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
