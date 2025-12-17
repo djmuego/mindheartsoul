@@ -13,7 +13,7 @@
 | Task | Status | Description |
 |------|--------|-------------|
 | A: CI/Quality Gates | ✅ DONE | GitHub Actions workflow for typecheck+build+test |
-| B: i18n Safety Net | 🔧 TODO | Script to validate locale key consistency |
+| B: i18n Safety Net | ✅ DONE | Locale key consistency checker + CI integration |
 | C: Observability | 🔧 TODO | Error Boundary + lightweight logging |
 | D: UX Consistency | 🔧 TODO | Success toasts, unified empty states |
 | E: Performance | 🔧 TODO | Bundle analyzer, lazy loading |

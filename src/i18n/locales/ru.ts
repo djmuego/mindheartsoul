@@ -178,4 +178,43 @@ export default {
   'notifications.lessonCompleted': 'Урок завершён',
   'notifications.subscriptionPurchased': 'Pro подписка активирована',
   'notifications.subscriptionExpired': 'Pro подписка истекла',
+
+  'ai.limitReached': 'Достигнут дневной лимит',
+  'ai.upgradeToChat': 'Обновитесь до Pro для неограниченного чата.',
+
+  'astrology.desc': 'Глубокое погружение в транзиты планет. Скоро.',
+
+  'booking.cancel': 'Отменить бронирование',
+  'booking.cancelled': 'Отменено',
+  'booking.confirm': 'Подтвердить бронирование',
+  'booking.history': 'История бронирований',
+  'booking.join': 'Присоединиться к сессии',
+  'booking.none': 'Нет предстоящих сессий',
+  'booking.pay': 'Оплатить сейчас (Mock)',
+  'booking.pending': 'Ожидает оплаты',
+  'booking.selectTime': 'Выберите дату и время',
+  'booking.success': 'Бронирование подтверждено!',
+  'booking.summary': 'Сводка бронирования',
+  'booking.videoDesc': 'Нажмите ниже, чтобы присоединиться к видеокомнате.',
+  'booking.videoReady': 'Видеосессия готова',
+
+  'community.addComment': 'Добавить комментарий...',
+  'community.comments': 'Комментарии',
+  'community.create': 'Создать пост',
+  'community.imageUrl': 'URL изображения (необязательно)',
+  'community.placeholder': 'Поделитесь своими мыслями, инсайтами или вопросами...',
+  'community.reportAbuse': 'Оскорбление',
+  'community.reportOther': 'Другое',
+  'community.reportReason': 'Причина жалобы',
+  'community.reportSpam': 'Спам',
+  'community.reported': 'Жалоба отправлена.',
+
+  'hd.desc': 'Откройте свой энергетический тип и стратегию. Скоро.',
+
+  'natal.astrology': 'Астрология',
+  'natal.humanDesign': 'Дизайн Человека',
+  'natal.modules': 'Расширенные карты',
+
+  'profile.charts': 'Мои карты',
+  'profile.statusPending': 'Заявка на рассмотрении',
 };

@@ -179,4 +179,43 @@ export default {
   'notifications.lessonCompleted': 'Lección completada',
   'notifications.subscriptionPurchased': 'Suscripción Pro activada',
   'notifications.subscriptionExpired': 'Suscripción Pro expirada',
+
+  'ai.limitReached': 'Límite diario alcanzado',
+  'ai.upgradeToChat': 'Actualiza a Pro para chat ilimitado.',
+
+  'astrology.desc': 'Análisis profundo de tránsitos planetarios. Próximamente.',
+
+  'booking.cancel': 'Cancelar reserva',
+  'booking.cancelled': 'Cancelada',
+  'booking.confirm': 'Confirmar reserva',
+  'booking.history': 'Historial de reservas',
+  'booking.join': 'Unirse a sesión',
+  'booking.none': 'No hay sesiones próximas',
+  'booking.pay': 'Pagar ahora (Mock)',
+  'booking.pending': 'Pago pendiente',
+  'booking.selectTime': 'Seleccionar fecha y hora',
+  'booking.success': '¡Reserva confirmada!',
+  'booking.summary': 'Resumen de reserva',
+  'booking.videoDesc': 'Haz clic abajo para unirte a la sala de video de forma segura.',
+  'booking.videoReady': 'Sesión de video lista',
+
+  'community.addComment': 'Agregar comentario...',
+  'community.comments': 'Comentarios',
+  'community.create': 'Crear publicación',
+  'community.imageUrl': 'URL de imagen (Opcional)',
+  'community.placeholder': 'Comparte tus pensamientos, ideas o preguntas...',
+  'community.reportAbuse': 'Abuso',
+  'community.reportOther': 'Otro',
+  'community.reportReason': 'Motivo del reporte',
+  'community.reportSpam': 'Spam',
+  'community.reported': 'Reporte enviado.',
+
+  'hd.desc': 'Descubre tu tipo de energía y estrategia. Próximamente.',
+
+  'natal.astrology': 'Astrología',
+  'natal.humanDesign': 'Diseño Humano',
+  'natal.modules': 'Cartas avanzadas',
+
+  'profile.charts': 'Mis cartas',
+  'profile.statusPending': 'Solicitud pendiente',
 };

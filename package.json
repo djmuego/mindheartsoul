@@ -7,10 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint:i18n": "node scripts/check-i18n.mjs",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "doctor": "npm run typecheck && npm run build && npm run test"
+    "doctor": "npm run typecheck && npm run build && npm run test && npm run lint:i18n"
   },
   "dependencies": {
     "@types/qrcode": "^1.5.6",

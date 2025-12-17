@@ -31,6 +31,9 @@ jobs:
       - name: Run TypeScript check
         run: npm run typecheck
       
+      - name: Validate i18n key consistency
+        run: npm run lint:i18n
+      
       - name: Run tests
         run: npm test -- --run
       
