@@ -4,27 +4,10 @@ import { MeditationDetailScreen } from '../../components/screens/MeditationDetai
 
 export const meditationModule: AppModule = {
   id: 'meditation',
-  label: 'Meditation',
-  i18nKey: 'meditation.title',
-  
-  // No nav item (accessed via Natal screen or direct link)
-  nav: undefined,
+  // No nav item (accessed via Natal screen)
   
   routes: [
-    {
-      path: '/meditation',
-      element: <MeditationScreen />,
-      layout: 'scaffold'
-    },
-    {
-      path: '/meditation/:id',
-      element: <MeditationDetailScreen />,
-      layout: 'scaffold'
-    }
-  ],
-
-  // Available to all users (free preview)
-  requiresPro: false,
-  roles: undefined,
-  featureFlag: undefined
+    { path: 'meditation', element: <MeditationScreen /> },
+    { path: 'meditation/:id', element: <MeditationDetailScreen /> }
+  ]
 };

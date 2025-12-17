@@ -1,4 +1,3 @@
-import { Calendar } from 'lucide-react';
 import { AppModule } from './types';
 import { MySessionsScreen } from '../../components/screens/MySessionsScreen';
 

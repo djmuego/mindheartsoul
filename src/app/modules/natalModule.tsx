@@ -1,5 +1,4 @@
 
-import { Sparkles } from 'lucide-react';
 import { AppModule } from './types';
 import { NatalScreen } from '../../components/screens/NatalScreen';
 

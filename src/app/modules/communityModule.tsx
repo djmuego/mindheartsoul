@@ -1,5 +1,4 @@
 
-import { Heart } from 'lucide-react';
 import { AppModule } from './types';
 import { CommunityFeedScreen } from '../../components/screens/CommunityFeedScreen';
 import { CommunityCreatePostScreen } from '../../components/screens/CommunityCreatePostScreen';
