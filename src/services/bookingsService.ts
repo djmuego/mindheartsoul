@@ -69,6 +69,21 @@ export const updateBookingStatus = (id: string, status: BookingStatus): Booking 
   return booking;
 };
 
+/**
+ * Confirm booking after payment
+ */
+export const confirmBooking = (bookingId: string, paymentId?: string): Booking | null => {
+  const booking = getBookingById(bookingId);
+  if (!booking) return null;
+  
+  booking.status = 'confirmed';
+  if (paymentId) {
+    booking.paymentId = paymentId;
+  }
+  saveBooking(booking);
+  return booking;
+};
+
 // --- Mock Slots Generator ---
 
 export const getMockTimeSlots = (mentorId: string, dateIso: string): string[] => {

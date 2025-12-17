@@ -15,11 +15,9 @@ import {
 } from '../../../services/payments/apironeService';
 import { 
   createPayment, 
-  
   markPaymentComplete 
 } from '../../../services/payments/paymentsService';
 import { PaymentRecord, PaymentPurpose } from '../../../types';
-import { storage, STORAGE_KEYS } from '../../../services/storage';
 import QRCode from 'qrcode';
 
 const APIRONE_ACCOUNT = import.meta.env.VITE_APIRONE_ACCOUNT || 'demo-account';
@@ -101,6 +99,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const actualPurpose = (searchParams.get('purpose') as PaymentPurpose) || purpose;
   const actualRelatedId = searchParams.get('relatedId') || relatedId;
   const itemTitle = searchParams.get('title') || ''; // For course/booking titles
+  const subscriptionPlan = searchParams.get('plan') as 'pro_monthly' | 'pro_yearly' | null; // For subscription
 
   useEffect(() => {
     if (!user) {
@@ -219,17 +218,30 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   const handlePaymentSuccess = (purpose: PaymentPurpose, relatedId?: string) => {
     if (purpose === 'pro_subscription') {
-      // Activate Pro subscription
-      const subscription = {
-        id: `sub_${Date.now()}`,
-        userId: user!.id,
-        plan: 'pro' as const,
-        status: 'active' as const,
-        startedAtIso: new Date().toISOString(),
-      };
-      storage.setJSON(STORAGE_KEYS.SUBSCRIPTION, subscription);
+      // Import activatePro from subscriptionService
+      const { activatePro } = require('../../../services/subscriptionService');
+      
+      // Activate Pro subscription with plan
+      const plan = subscriptionPlan || 'pro_monthly';
+      activatePro(user!.id, plan, payment?.id);
+      
       navigate('/pro?success=true');
     } else if (purpose === 'booking' && relatedId) {
+      // Import confirmBooking from bookingsService
+      const { confirmBooking } = require('../../../services/bookingsService');
+      
+      // Confirm booking
+      confirmBooking(relatedId, payment?.id);
+      
+      // Create notification
+      const { addNotification } = require('../../../services/notificationsService');
+      addNotification({
+        userId: user!.id,
+        type: 'booking_confirmed',
+        titleKey: 'notifications.bookingConfirmed',
+        payload: { bookingId: relatedId }
+      });
+      
       navigate(`/bookings/${relatedId}?success=true`);
     } else if (purpose === 'course' && relatedId) {
       navigate(`/courses/${relatedId}?success=true`);

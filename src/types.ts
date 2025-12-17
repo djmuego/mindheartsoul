@@ -196,13 +196,17 @@ export type FeatureFlagKey =
   | 'humanDesignEnabled' 
   | 'astrologyEnabled';
 
+export type SubscriptionPlan = 'pro_monthly' | 'pro_yearly';
+
 export interface SubscriptionRecord {
   id: string;
   userId: string;
-  plan: 'pro';
+  plan: SubscriptionPlan;
   status: 'active' | 'canceled' | 'expired';
   startedAtIso: string;
-  expiresAtIso?: string;
+  expiresAtIso: string; // Now required - subscriptions must expire
+  autoRenew?: boolean; // For future auto-renewal implementation
+  renewalPaymentId?: string; // Link to last payment
 }
 
 export type NotificationType = 'booking_confirmed' | 'payment_success' | 'mentor_approved' | 'system_alert';

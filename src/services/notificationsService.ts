@@ -43,3 +43,29 @@ export const pushNotification = (
   all.push(newItem);
   storage.setJSON(STORAGE_KEYS.NOTIFICATIONS, all);
 };
+
+/**
+ * Add notification (alias for pushNotification with more flexible params)
+ */
+export const addNotification = (params: {
+  userId: string;
+  type: NotificationType;
+  titleKey: string;
+  bodyKey?: string;
+  payload?: any;
+}): void => {
+  const all = storage.getJSON<NotificationItem[]>(STORAGE_KEYS.NOTIFICATIONS, []);
+  
+  const newItem: NotificationItem = {
+    id: `notif_${Math.random().toString(36).substr(2, 9)}`,
+    userId: params.userId,
+    type: params.type,
+    titleKey: params.titleKey,
+    bodyKey: params.bodyKey,
+    createdAtIso: new Date().toISOString(),
+    payload: params.payload
+  };
+  
+  all.push(newItem);
+  storage.setJSON(STORAGE_KEYS.NOTIFICATIONS, all);
+};
