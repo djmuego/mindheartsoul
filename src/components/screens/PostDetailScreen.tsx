@@ -31,7 +31,13 @@ export const PostDetailScreen: React.FC = () => {
   const handleLike = () => {
     if (!user) return;
     toggleLike(post.id, user.id);
-    setPost(getPostById(post.id)); // update local state
+    const updatedPost = getPostById(post.id);
+    if (updatedPost) {
+      setPost(updatedPost); // update local state
+    } else {
+      // Post was deleted, navigate back
+      navigate(-1);
+    }
   };
 
   const handleSendComment = () => {
@@ -39,7 +45,13 @@ export const PostDetailScreen: React.FC = () => {
     addComment(post.id, user, newComment);
     setNewComment('');
     setComments(getComments(post.id));
-    setPost(getPostById(post.id)); // update counts
+    const updatedPost = getPostById(post.id);
+    if (updatedPost) {
+      setPost(updatedPost); // update counts
+    } else {
+      // Post was deleted, navigate back
+      navigate(-1);
+    }
   };
 
   const handleReport = (reason: 'spam' | 'abuse' | 'other') => {

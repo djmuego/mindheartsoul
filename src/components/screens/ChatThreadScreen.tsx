@@ -47,7 +47,8 @@ export const ChatThreadScreen: React.FC = () => {
   }, [messages.length]);
 
   const handleSend = async () => {
-    if (!inputText.trim() || !user || !id) return;
+    // Add conversation check to prevent race condition
+    if (!inputText.trim() || !user || !id || !conversation) return;
     
     const text = inputText;
     setInputText('');
@@ -70,12 +71,12 @@ export const ChatThreadScreen: React.FC = () => {
     }
     
     // 2. Check if AI/Assistant conversation
-    const isAIConversation = conversation?.participantIds.some(pid => 
+    const isAIConversation = conversation.participantIds.some(pid => 
       pid === 'support_bot' || pid.startsWith('ai_') || pid.startsWith('sys_')
     );
 
     // 3. AI Response Logic (only for AI conversations)
-    if (isAIConversation && conversation) {
+    if (isAIConversation) {
         const otherId = conversation.participantIds.find(pid => pid !== user.id);
         const otherIndex = conversation.participantIds.indexOf(otherId || '');
         const otherName = otherIndex >= 0 ? conversation.participantNames[otherIndex] : 'Assistant';
@@ -89,7 +90,13 @@ export const ChatThreadScreen: React.FC = () => {
         const isPro = sub && isSubscriptionActive(sub);
 
         if (otherId) {
-            setTimeout(() => {
+            // Store mounted state to prevent memory leak
+            let isMounted = true;
+            
+            const timeoutId = setTimeout(() => {
+                // Don't execute if component unmounted
+                if (!isMounted) return;
+                
                 let response: string;
 
                 if (!hasAPIKey) {
@@ -122,6 +129,12 @@ export const ChatThreadScreen: React.FC = () => {
                 });
                 refreshChat();
             }, 1500 + Math.random() * 1000); // 1.5 - 2.5s delay
+            
+            // Cleanup function to prevent memory leak
+            return () => {
+                isMounted = false;
+                clearTimeout(timeoutId);
+            };
         }
     }
     
