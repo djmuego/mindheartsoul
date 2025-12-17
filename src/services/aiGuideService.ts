@@ -1,8 +1,7 @@
 
 import { BirthProfile } from '../types';
 import { storage, STORAGE_KEYS } from './storage';
-// import { GoogleGenAI } from "@google/genai"; // TODO: Replace with real Gemini SDK
-// Mock implementation for now
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface AiReplyParams {
   text: string;
@@ -47,9 +46,21 @@ export const generateAiReply = async ({ text, locale, birthProfile, userName, us
   }
 
   try {
-    // TODO: Uncomment when real Gemini SDK is configured
-    // const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    // Get API key from environment
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     
+    // If no API key, return friendly fallback message
+    if (!apiKey || apiKey === 'PLACEHOLDER_API_KEY') {
+      return `Hello ${userName || 'Traveler'}! 👋 I'm your AI Guide. You asked: "${text}". 
+      
+⚠️ AI is temporarily unavailable. To enable real AI responses, please set your VITE_GEMINI_API_KEY in .env.local file.`;
+    }
+    
+    // Initialize Gemini AI
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    
+    // Build system instruction
     let systemInstruction = `You are a helpful, spiritual, and empathetic AI Guide for an app called MindHeartSoul. 
     Your tone is soothing, wise, and supportive. You help users navigate their journey of mind, heart, and soul.
     The user's name is ${userName || 'Traveler'}.
@@ -65,15 +76,26 @@ export const generateAiReply = async ({ text, locale, birthProfile, userName, us
       systemInstruction += `\nThe user has not set up their birth profile yet. Encourage them gently to do so for deeper insights if they ask about astrology.`;
     }
 
-    // Mock response for now
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API delay
+    // Generate response
+    const prompt = `${systemInstruction}\n\nUser: ${text}\n\nAI Guide:`;
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const generatedText = response.text();
     
-    return `Hello ${userName || 'Traveler'}! I'm your AI Guide. You asked: "${text}". This is a mock response. To enable real AI responses, configure the Gemini API key.`;
-    
-    return "I am sensing a disturbance in the flow. Please try asking again.";
-  } catch (error) {
+    return generatedText;
+  } catch (error: any) {
     console.error("AI Guide Error:", error);
-    // Return a fallback message gracefully
+    
+    // Provide specific error messages
+    if (error?.message?.includes('API_KEY_INVALID') || error?.message?.includes('401')) {
+      return "🔑 The API key seems invalid. Please check your VITE_GEMINI_API_KEY in .env.local";
+    }
+    
+    if (error?.message?.includes('quota') || error?.message?.includes('429')) {
+      return "⏰ API quota exceeded. Please try again later or upgrade your Gemini API plan.";
+    }
+    
+    // Return a graceful fallback message
     return "I am currently meditating on your question but cannot respond right now. Please try again later.";
   }
 };
