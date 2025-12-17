@@ -38,9 +38,8 @@ export const BookingDetailScreen: React.FC = () => {
   };
 
   const handleJoin = () => {
-    if (booking.meetingUrl) {
-      window.open(booking.meetingUrl, '_blank');
-    }
+    // Navigate to SessionJoinScreen for better UX and join status validation
+    navigate(`/sessions/${booking.id}`);
   };
 
   const StatusBadge = () => {

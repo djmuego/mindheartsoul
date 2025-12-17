@@ -3,20 +3,18 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
 import { ChevronLeft, Send, Lock } from 'lucide-react';
-import { getConversationById, getMessages, sendMessage, Message, Conversation } from '../../services/chatService';
+import { getConversationById, getMessagesByConversation, sendMessage, Message, Conversation } from '../../services/chatService';
 import { useSession } from '../../context/SessionContext';
 import { useLanguage } from '../../context/LanguageContext';
-import { useEntitlements } from '../../hooks/useEntitlements';
-import { checkAiLimit } from '../../services/aiGuideService';
+
 
 export const ChatThreadScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, birthProfile } = useSession();
-  const { locale, t } = useLanguage();
-  const { isPro } = useEntitlements();
+  const { user } = useSession();
+  const { t } = useLanguage();
 
-  const [conversation, setConversation] = useState<Conversation | undefined>(undefined);
+  const [conversation, setConversation] = useState<Conversation | undefined | null>(undefined);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLimitReached, setIsLimitReached] = useState(false);
@@ -25,21 +23,18 @@ export const ChatThreadScreen: React.FC = () => {
   const refreshChat = () => {
     if (id) {
        setConversation(getConversationById(id));
-       setMessages(getMessages(id));
+       setMessages(getMessagesByConversation(id));
     }
   };
 
   useEffect(() => {
     refreshChat();
     // Check limits on load
-    if (conversation?.type === 'ai' && user) {
-      const { allowed } = checkAiLimit(user.id, isPro);
-      setIsLimitReached(!allowed);
-    }
+    // Auto-refresh (polling simulation)
     
     const interval = setInterval(refreshChat, 1000);
     return () => clearInterval(interval);
-  }, [id, conversation?.type, isPro]);
+  }, [id]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -48,25 +43,18 @@ export const ChatThreadScreen: React.FC = () => {
   const handleSend = async () => {
     if (!inputText.trim() || !user || !id) return;
     
-    // Check limit again before sending
-    if (conversation?.type === 'ai') {
-      const { allowed } = checkAiLimit(user.id, isPro);
-      if (!allowed) {
-        setIsLimitReached(true);
-        return;
-      }
-    }
-
     const text = inputText;
     setInputText('');
     
     try {
-      await sendMessage(id, text, user, birthProfile, locale);
-      // Re-check limit after send
-      if (conversation?.type === 'ai') {
-        const { allowed } = checkAiLimit(user.id, isPro);
-        if (!allowed) setIsLimitReached(true);
-      }
+      sendMessage({
+        conversationId: id,
+        senderId: user.id,
+        senderName: user.name,
+        senderAvatar: user.avatarDataUrl,
+        text: text
+      });
+      refreshChat();
     } catch (e: any) {
       if (e.message === 'LIMIT_REACHED') setIsLimitReached(true);
     }
@@ -87,19 +75,19 @@ export const ChatThreadScreen: React.FC = () => {
           <ChevronLeft size={24} />
         </button>
         <img 
-          src={conversation.avatarUrl} 
+          src={user && conversation ? (conversation.participantIds[0] === user.id ? conversation.participantAvatars?.[1] : conversation.participantAvatars?.[0]) || `https://ui-avatars.com/api/?name=User&background=4f46e5&color=fff` : ''}
           className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800" 
-          alt={conversation.title} 
+          alt="User"
         />
         <h1 className="text-lg font-bold text-slate-900 dark:text-white truncate flex-1">
-          {conversation.title}
+          {user && conversation ? (conversation.participantIds[0] === user.id ? conversation.participantNames[1] : conversation.participantNames[0]) : 'Chat'}
         </h1>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
          {messages.map(msg => {
-           const isMe = msg.role === 'user';
+           const isMe = msg.senderId === user?.id;
            return (
              <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
