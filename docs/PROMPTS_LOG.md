@@ -219,3 +219,48 @@ After core functionality is stable:
 4. Production deployment
 
 ---
+
+---
+
+## 2025-12-17: PROMPT v3 - Fix-First, EN-first, No Video
+
+### Goal
+**Fix-first approach**: Stop adding features, make core flows actually work.
+- Fix broken screens, dead ends, state bugs
+- No in-app video (chat consultations only)
+- EN-first i18n (translations last)
+- Don't break payments/pro/subscription logic
+
+### Execution Plan (3 micro-PRs)
+
+**STEP 0 - Reality Debug** ✅ DONE
+- Created `STATUS_AUDIT_REALITY_v3.md`
+- Module status matrix: DONE / PARTIAL / BROKEN / PLACEHOLDER
+- Evidence collection plan for manual browser testing
+- Likely root causes identified (route mismatches, state issues)
+
+**STEP 1 - Fix Messages/Chat** (IN PROGRESS)
+- Acceptance: send works, persists, survives reload
+- AI fallback: no API key = "temporarily unavailable" (chat still works)
+- Pro gating: non-Pro = upsell (chat still works)
+
+**STEP 2 - Fix Mentors** (PENDING)
+- Acceptance: all mentor cards clickable, no blank pages
+- Check: route path mismatches, useParams() key mismatches
+- Add "Mentor not found" screen if needed
+
+**STEP 3 - UI Cleanup** (PENDING)
+- Navigation: 2-4 items max, all functional
+- Natal screen: remove wheel, add simple cards
+- Everything navigates to valid screens
+
+### Quality Gates
+- [ ] npm run doctor green
+- [ ] 10-15 step smoke test
+- [ ] Update PROMPTS_LOG after each step
+
+### Current Status
+- Dev Server: https://5182-iydq5cfrmkja0tfc4n2ch-b9b802c4.sandbox.novita.ai
+- STEP 0: ✅ COMPLETE (audit created)
+- STEP 1: 🔄 STARTING (manual test + fix chat)
+
