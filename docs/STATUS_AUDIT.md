@@ -1,8 +1,23 @@
-# STATUS AUDIT — Round 2: Product Polish (P1)
+# STATUS AUDIT — Release Candidate (RC) Hardening
 
-**Date**: 2025-12-17 (Updated after P0 completion)  
-**Baseline**: Commits bc36326 (code) + fc895d0 (docs)  
-**Goal**: Complete P1 improvements for production-ready UX
+**Date**: 2025-12-17  
+**Phase**: RC / Pre-Production Hardening  
+**Baseline**: P0 ✅ + P1 (Tasks 1-4) ✅  
+**Latest Commits**: d4b6aaf (Task 3) + d190bb6 (Task 4) + a78a02d (docs)  
+**Goal**: Stability, observability, deploy readiness (no new major features)
+
+---
+
+## 🏗️ RC TASKS STATUS
+
+| Task | Status | Description |
+|------|--------|-------------|
+| A: CI/Quality Gates | ✅ DONE | GitHub Actions workflow for typecheck+build+test |
+| B: i18n Safety Net | 🔧 TODO | Script to validate locale key consistency |
+| C: Observability | 🔧 TODO | Error Boundary + lightweight logging |
+| D: UX Consistency | 🔧 TODO | Success toasts, unified empty states |
+| E: Performance | 🔧 TODO | Bundle analyzer, lazy loading |
+| F: Release Docs | 🔧 TODO | Deployment guide, release notes, security notes |
 
 ---
 
