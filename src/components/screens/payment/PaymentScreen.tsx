@@ -100,6 +100,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const usdAmount = propAmount || parseFloat(searchParams.get('amount') || '9.99');
   const actualPurpose = (searchParams.get('purpose') as PaymentPurpose) || purpose;
   const actualRelatedId = searchParams.get('relatedId') || relatedId;
+  const itemTitle = searchParams.get('title') || ''; // For course/booking titles
 
   useEffect(() => {
     if (!user) {
@@ -293,8 +294,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">${usdAmount.toFixed(2)} USD</div>
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                 {actualPurpose === 'pro_subscription' && 'Pro Subscription - Lifetime Access'}
-                {actualPurpose === 'booking' && 'Session Booking Payment'}
-                {actualPurpose === 'course' && 'Course Purchase'}
+                {actualPurpose === 'booking' && (itemTitle ? `Session: ${itemTitle}` : 'Session Booking Payment')}
+                {actualPurpose === 'course' && (itemTitle ? `Course: ${itemTitle}` : 'Course Purchase')}
               </p>
             </div>
 

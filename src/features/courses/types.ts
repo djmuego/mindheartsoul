@@ -19,7 +19,8 @@ export interface Course {
   imageUrl?: string;
   category: 'Mindfulness' | 'Astrology' | 'Self-Care' | 'Spirituality';
   lessons: Lesson[];
-  isProOnly?: boolean;
+  isProOnly?: boolean; // Pro users get access
+  price?: number; // USD price (if not set or 0, course is free)
   status?: CourseStatus;
   createdAtIso?: string;
   updatedAtIso?: string;

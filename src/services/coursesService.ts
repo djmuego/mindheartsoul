@@ -171,6 +171,36 @@ export const getCoursesByMentor = (mentorId: string): Course[] => {
   return getCourses().filter(c => c.mentorId === mentorId);
 };
 
+/**
+ * Check if user has purchased a course
+ */
+export const hasUserPurchasedCourse = (userId: string, courseId: string): boolean => {
+  const payments = storage.getJSON<any[]>('mhs_payments_v1', []);
+  return payments.some(p => 
+    p.userId === userId && 
+    p.purpose === 'course' && 
+    p.relatedId === courseId && 
+    p.status === 'succeeded'
+  );
+};
+
+/**
+ * Check if user has access to course (free, purchased, or Pro member)
+ */
+export const hasUserAccessToCourse = (userId: string, courseId: string, isPro: boolean): boolean => {
+  const course = getCourseById(courseId);
+  if (!course) return false;
+  
+  // Free course (no price or price is 0)
+  if (!course.price || course.price === 0) return true;
+  
+  // Pro users get access to Pro-only courses for free
+  if (course.isProOnly && isPro) return true;
+  
+  // Check if user purchased the course
+  return hasUserPurchasedCourse(userId, courseId);
+};
+
 export const getPublishedCourses = (): Course[] => {
   return getCourses().filter(c => c.status === 'published' || !c.status);
 };
@@ -187,6 +217,7 @@ export const seedCoursesIfEmpty = () => {
       mentorName: 'Sarah Johnson',
       imageUrl: 'https://picsum.photos/seed/c1/400/250',
       category: 'Mindfulness',
+      price: 0,
       lessons: [
         { id: 'l1', courseId: 'c1', title: 'What is Mindfulness?', durationMin: 5, order: 1, content: 'Mindfulness is the basic human ability to be fully present, aware of where we are and what we’re doing, and not overly reactive or overwhelmed by what’s going on around us.\n\n### Key Principles\n* Awareness\n* Non-judgment\n* In the moment' },
         { id: 'l2', courseId: 'c1', title: 'Your First Meditation', durationMin: 10, order: 2, content: 'Sit comfortably. Close your eyes. Focus on your breath. Inhale... Exhale... \n\nWhenever your mind wanders, gently bring it back to your breath.' },
@@ -202,6 +233,7 @@ export const seedCoursesIfEmpty = () => {
       imageUrl: 'https://picsum.photos/seed/c2/400/250',
       category: 'Astrology',
       isProOnly: true,
+      price: 19.99,
       lessons: [
         { id: 'l4', courseId: 'c2', title: 'The Sun Sign', durationMin: 10, order: 1, content: 'Your Sun sign represents your core essence, your ego, and your life force.' },
         { id: 'l5', courseId: 'c2', title: 'The Moon Sign', durationMin: 12, order: 2, content: 'The Moon rules your emotions, instincts, and what you need to feel safe.' },
@@ -216,6 +248,7 @@ export const seedCoursesIfEmpty = () => {
       mentorName: 'Elena Petrova',
       imageUrl: 'https://picsum.photos/seed/c3/400/250',
       category: 'Self-Care',
+      price: 14.99,
       lessons: [
         { id: 'l7', courseId: 'c3', title: 'Meeting Your Inner Child', durationMin: 20, order: 1, content: 'Visualize yourself at age 5. What does she/he need? Safe space? A hug? Validation?' },
         { id: 'l8', courseId: 'c3', title: 'Writing a Letter', durationMin: 30, order: 2, content: 'Write a letter to your younger self. Tell them everything turned out okay.' }
@@ -229,6 +262,7 @@ export const seedCoursesIfEmpty = () => {
       mentorName: 'Marcus Aurelius',
       imageUrl: 'https://picsum.photos/seed/c4/400/250',
       category: 'Spirituality',
+      price: 9.99,
       lessons: [
         { id: 'l9', courseId: 'c4', title: 'The Dichotomy of Control', durationMin: 8, order: 1, content: 'Some things are up to us, some things are not. Focus only on what is up to you.' }
       ]

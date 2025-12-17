@@ -2,19 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
-import { ChevronLeft, Play, CheckCircle, Lock, User } from 'lucide-react';
+import { ChevronLeft, Play, CheckCircle, Lock, User, ShoppingCart } from 'lucide-react';
 import { useT } from '../../i18n/useT';
-import { getCourseById, getProgress } from '../../services/coursesService';
+import { getCourseById, getProgress, hasUserAccessToCourse } from '../../services/coursesService';
 import { Course, CourseProgress } from '../../features/courses/types';
 import { useSession } from '../../context/SessionContext';
+import { useEntitlements } from '../../hooks/useEntitlements';
 
 export const CourseDetailScreen: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const t = useT();
   const { user } = useSession();
+  const { isPro } = useEntitlements();
   const [course, setCourse] = useState<Course | undefined>(undefined);
   const [progress, setProgress] = useState<CourseProgress | undefined>(undefined);
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
     if (courseId) {
@@ -25,12 +28,14 @@ export const CourseDetailScreen: React.FC = () => {
   useEffect(() => {
     if (user && courseId) {
       setProgress(getProgress(user.id, courseId));
+      setHasAccess(hasUserAccessToCourse(user.id, courseId, isPro));
     }
-  }, [user, courseId]);
+  }, [user, courseId, isPro]);
 
   if (!course) return <div className="p-8 text-center">Loading...</div>;
 
   const isStarted = progress && progress.completedLessonIds.length > 0;
+  const isFree = !course.price || course.price === 0;
 
   return (
     <div className="min-h-full bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors duration-200">
@@ -67,7 +72,8 @@ export const CourseDetailScreen: React.FC = () => {
            <div className="space-y-3">
              {course.lessons.map((lesson, idx) => {
                const isCompleted = progress?.completedLessonIds.includes(lesson.id);
-               const isLocked = course.isProOnly && idx > 0; // Lock after first lesson preview if Pro
+               // Lock lessons if user doesn't have access (after first preview lesson)
+               const isLocked = !hasAccess && idx > 0;
 
                return (
                  <div 
@@ -106,13 +112,41 @@ export const CourseDetailScreen: React.FC = () => {
          </div>
       </div>
 
-      <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 z-20 safe-area-pb">
-         <button
-           onClick={() => navigate(`/courses/${course.id}/lessons/${course.lessons[0].id}`)}
-           className={`w-full py-3 flex items-center justify-center space-x-2 bg-${Brand.colors.primary} hover:bg-indigo-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-200 dark:shadow-none`}
-         >
-           <span>{isStarted ? t('courses.continue') : t('courses.start')}</span>
-         </button>
+      <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 sticky bottom-0 z-20 safe-area-pb space-y-3">
+         {/* Price Badge (if paid course and no access) */}
+         {!isFree && !hasAccess && (
+           <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 rounded-xl p-4">
+             <div>
+               <p className="text-sm text-slate-600 dark:text-slate-400">Course Price</p>
+               <p className="text-2xl font-bold text-slate-900 dark:text-white">${course.price}</p>
+               {course.isProOnly && (
+                 <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">
+                   Free with Pro membership
+                 </p>
+               )}
+             </div>
+             <ShoppingCart className="text-slate-400" size={32} />
+           </div>
+         )}
+
+         {/* Action Button */}
+         {hasAccess ? (
+           <button
+             onClick={() => navigate(`/courses/${course.id}/lessons/${course.lessons[0].id}`)}
+             className={`w-full py-3 flex items-center justify-center space-x-2 bg-${Brand.colors.primary} hover:bg-indigo-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-200 dark:shadow-none`}
+           >
+             <Play size={20} />
+             <span>{isStarted ? t('courses.continue') : t('courses.start')}</span>
+           </button>
+         ) : (
+           <button
+             onClick={() => navigate(`/payment?purpose=course&amount=${course.price}&relatedId=${course.id}&title=${encodeURIComponent(course.title)}`)}
+             className="w-full py-3 flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-all shadow-lg"
+           >
+             <ShoppingCart size={20} />
+             <span>Buy Course - ${course.price}</span>
+           </button>
+         )}
       </div>
     </div>
   );

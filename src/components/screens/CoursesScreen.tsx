@@ -71,12 +71,23 @@ export const CoursesScreen: React.FC = () => {
             >
               <div className="h-32 w-full bg-slate-200 relative overflow-hidden">
                 <img src={course.imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={course.title} />
+                
+                {/* Price Badge */}
+                {course.price && course.price > 0 && (
+                  <div className="absolute top-2 right-2 bg-green-600 backdrop-blur text-white text-xs font-bold px-2 py-1 rounded-full">
+                    ${course.price}
+                  </div>
+                )}
+                
+                {/* Pro Badge (for Pro-only courses) */}
                 {course.isProOnly && (
-                  <div className="absolute top-2 right-2 bg-black/60 backdrop-blur text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
+                  <div className="absolute top-2 left-2 bg-indigo-600 backdrop-blur text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
                     <Lock size={12} className="mr-1" />
                     {t('courses.proBadge')}
                   </div>
                 )}
+                
+                {/* Category */}
                 <div className="absolute bottom-2 left-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur text-xs font-semibold px-2 py-1 rounded text-slate-800 dark:text-slate-200">
                   {course.category}
                 </div>
