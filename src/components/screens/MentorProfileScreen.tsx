@@ -1,16 +1,34 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
-import { ChevronLeft, Star, Globe, Clock } from 'lucide-react';
+import { ChevronLeft, Star, Globe, Clock, MessageCircle } from 'lucide-react';
 import { getMentorById } from '../../services/mockData';
 import { useLanguage } from '../../context/LanguageContext';
+import { useSession } from '../../context/SessionContext';
+import { getOrCreateConversation } from '../../services/chatService';
 
 export const MentorProfileScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useSession();
   
   const mentor = getMentorById(id || '');
+  
+  const handleOpenChat = () => {
+    if (!user || !mentor) return;
+    
+    // Get or create conversation with this mentor
+    const conversation = getOrCreateConversation(
+      user.id,
+      mentor.userId,
+      [user.name, mentor.name],
+      [user.avatarDataUrl, mentor.avatarUrl]
+    );
+    
+    // Navigate to chat thread
+    navigate(`/chat/${conversation.id}`);
+  };
 
   if (!mentor) {
     return (
@@ -84,6 +102,15 @@ export const MentorProfileScreen: React.FC = () => {
                </span>
              ))}
            </div>
+           
+           {/* Open Chat CTA */}
+           <button
+             onClick={handleOpenChat}
+             className="mt-6 w-full flex items-center justify-center space-x-2 py-3 bg-white dark:bg-slate-800 border-2 border-indigo-500 text-indigo-600 dark:text-indigo-400 rounded-xl font-semibold hover:bg-indigo-50 dark:hover:bg-slate-700 transition-colors"
+           >
+             <MessageCircle size={20} />
+             <span>{t('booking.openChat') || 'Open Chat'}</span>
+           </button>
         </div>
 
         {/* Services */}
