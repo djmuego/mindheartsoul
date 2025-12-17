@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Brand } from '../../constants';
 import { ChevronLeft, Send, Lock } from 'lucide-react';
 import { getConversationById, getMessagesByConversation, sendMessage, Message, Conversation } from '../../services/chatService';
+import { getSubscription, isSubscriptionActive } from '../../services/subscriptionService';
 import { useSession } from '../../context/SessionContext';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -30,11 +31,16 @@ export const ChatThreadScreen: React.FC = () => {
   useEffect(() => {
     refreshChat();
     // Check limits on load
-    // Auto-refresh (polling simulation)
+    if (user && id) {
+       const sub = getSubscription(user.id);
+       const isPro = sub && isSubscriptionActive(sub);
+       // Optional: Check if they already hit a limit in previous session? 
+       // For now, we reset limit state on reload unless we store it.
+    }
     
-    const interval = setInterval(refreshChat, 1000);
+    const interval = setInterval(refreshChat, 3000); // Reduced polling frequency
     return () => clearInterval(interval);
-  }, [id]);
+  }, [id, user]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -46,6 +52,7 @@ export const ChatThreadScreen: React.FC = () => {
     const text = inputText;
     setInputText('');
     
+    // 1. Send User Message
     try {
       sendMessage({
         conversationId: id,
@@ -57,9 +64,52 @@ export const ChatThreadScreen: React.FC = () => {
       refreshChat();
     } catch (e: any) {
       if (e.message === 'LIMIT_REACHED') setIsLimitReached(true);
+      return;
     }
     
-    refreshChat();
+    // 2. Pro Check & AI Response
+    const sub = getSubscription(user.id);
+    const isPro = sub && isSubscriptionActive(sub);
+
+    if (!isPro) {
+        // Non-Pro: Allow the message to be sent, but block further interaction or show upsell
+        // The prompt says "User can send -> immediately visible" (Done above)
+        // "Pro gating: non-Pro -> paywall"
+        setIsLimitReached(true);
+        return;
+    }
+
+    // 3. Mock AI/Mentor Response (Pro only)
+    if (conversation) {
+        const otherId = conversation.participantIds.find(pid => pid !== user.id);
+        const otherIndex = conversation.participantIds.indexOf(otherId || '');
+        const otherName = otherIndex >= 0 ? conversation.participantNames[otherIndex] : 'Assistant';
+        const otherAvatar = otherIndex >= 0 ? conversation.participantAvatars?.[otherIndex] : undefined;
+
+        if (otherId) {
+            setTimeout(() => {
+                const responses = [
+                    "That is an interesting perspective. Could you elaborate?",
+                    "Based on your natal chart, this is a good time for reflection.",
+                    "I hear you. How does this align with your goals?",
+                    "Focus on your inner authority today.",
+                    "Let's explore that further. What specific challenges are you facing?",
+                    "This resonates with your Human Design profile.",
+                    "I am here to support you on this journey."
+                ];
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+                sendMessage({
+                    conversationId: id,
+                    senderId: otherId,
+                    senderName: otherName,
+                    senderAvatar: otherAvatar,
+                    text: randomResponse
+                });
+                refreshChat();
+            }, 1500 + Math.random() * 1000); // 1.5 - 2.5s delay
+        }
+    }
   };
 
   if (!conversation) return <div className="p-8 text-center">Loading...</div>;

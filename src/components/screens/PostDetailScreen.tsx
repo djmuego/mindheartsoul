@@ -50,6 +50,18 @@ export const PostDetailScreen: React.FC = () => {
     }
   };
 
+  const handleShare = async () => {
+    if (!post) return;
+    const url = `${window.location.origin}/#/post/${post.id}`;
+    const text = `${post.authorName}: ${post.text}\n${url}`;
+    try {
+        await navigator.clipboard.writeText(text);
+        alert("Post link copied to clipboard!"); 
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
+  };
+
   return (
     <div className="min-h-full bg-slate-50 dark:bg-slate-950 flex flex-col transition-colors duration-200">
       <div className="bg-white dark:bg-slate-900 p-4 shadow-sm border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 z-20">
@@ -111,7 +123,10 @@ export const PostDetailScreen: React.FC = () => {
                   <MessageCircle size={22} />
                   <span className="font-medium">{post.commentCount}</span>
                 </div>
-                <button className="flex items-center space-x-2 hover:text-indigo-500 dark:hover:text-indigo-400">
+                <button 
+                  onClick={handleShare}
+                  className="flex items-center space-x-2 hover:text-indigo-500 dark:hover:text-indigo-400"
+                >
                   <Share2 size={22} />
                 </button>
             </div>

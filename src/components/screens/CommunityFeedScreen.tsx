@@ -37,10 +37,17 @@ export const CommunityFeedScreen: React.FC = () => {
     setRefresh(r => r + 1);
   };
 
-  const handleShare = (e: React.MouseEvent) => {
+  const handleShare = async (e: React.MouseEvent, post: CommunityPost) => {
     e.stopPropagation();
-    // Stub
-    alert("Link copied to clipboard!");
+    const url = `${window.location.origin}/#/post/${post.id}`;
+    const text = `${post.authorName}: ${post.text}\n${url}`;
+    
+    try {
+        await navigator.clipboard.writeText(text);
+        alert("Post link copied to clipboard!"); 
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
   };
 
   return (
@@ -115,7 +122,7 @@ export const CommunityFeedScreen: React.FC = () => {
                   <span className="text-sm">{post.commentCount}</span>
                 </button>
                 <button 
-                  onClick={handleShare}
+                  onClick={(e) => handleShare(e, post)}
                   className="flex items-center space-x-1 hover:text-indigo-500 dark:hover:text-indigo-400 transition-colors"
                 >
                   <Share2 size={20} />
